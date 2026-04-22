@@ -42,7 +42,10 @@ next-env.d.ts
 
 # runtime / local
 cloudflared.log
-/media
+# Payload uploads — ignore everything except committed seed product images
+/media/*
+!/media/PM-*
+!/media/.gitkeep
 /New folder
 .claude
 
