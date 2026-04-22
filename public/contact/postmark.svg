@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <filter id="ink" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence baseFrequency="1.1" numOctaves="2" seed="7" type="fractalNoise"/>
+      <feDisplacementMap in="SourceGraphic" scale="2.4"/>
+    </filter>
+  </defs>
+  <g filter="url(#ink)" fill="none" stroke="#C0301F" stroke-width="2" opacity="0.85">
+    <circle cx="90" cy="90" r="74"/>
+    <circle cx="90" cy="90" r="62"/>
+    <!-- wavy lines through center -->
+    <path d="M 20 90 Q 40 80, 60 90 T 100 90 T 140 90 T 180 90" stroke-width="3"/>
+    <path d="M 20 102 Q 40 92, 60 102 T 100 102 T 140 102 T 180 102" stroke-width="3"/>
+  </g>
+  <!-- Curved text top -->
+  <defs>
+    <path id="pmTop" d="M 20 90 A 70 70 0 0 1 160 90"/>
+    <path id="pmBot" d="M 24 90 A 66 66 0 0 0 156 90"/>
+  </defs>
+  <g filter="url(#ink)">
+    <text fill="#C0301F" font-family="Georgia, serif" font-weight="700" font-size="13" letter-spacing="5">
+      <textPath href="#pmTop" startOffset="12%">ERODE · TAMIL NADU</textPath>
+    </text>
+    <text fill="#C0301F" font-family="Georgia, serif" font-weight="700" font-size="11" letter-spacing="6">
+      <textPath href="#pmBot" startOffset="22%">638 · INDIA POST</textPath>
+    </text>
+  </g>
+  <!-- center date -->
+  <g filter="url(#ink)" opacity="0.9">
+    <rect x="56" y="78" width="68" height="24" fill="none" stroke="#C0301F" stroke-width="1.4"/>
+    <text x="90" y="95" text-anchor="middle" fill="#C0301F" font-family="Georgia, serif" font-weight="700" font-size="14" letter-spacing="2">22·APR·26</text>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+Drop your real UPI QR image here as `upi-qr.png` (or `.jpg`).
+
+Generate it once from any UPI app (GPay / PhonePe / Paytm → Share QR) and save it as:
+
+  public/upi-qr.png
+
+The checkout page's <img src="/upi-qr.png" /> will pick it up automatically.
+
+Also update these two constants in src/components/CheckoutForm.tsx:
+  const UPI_ID    = "kanaa@upi";       // your real UPI VPA
+  const UPI_PAYEE = "Kanaa Foods";     // name that shows in the payment app
