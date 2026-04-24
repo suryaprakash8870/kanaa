@@ -17,8 +17,8 @@ import { Orders } from "./collections/Orders";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-// Only enable S3/R2 storage in production (or when env vars are set).
-// Falls back to local disk for dev so nothing breaks on your laptop.
+// Enable S3-compatible object storage (Supabase, R2, AWS S3, MinIO, ...)
+// when S3_* env vars are set. Falls back to local disk in dev.
 const s3Enabled =
   !!process.env.S3_BUCKET &&
   !!process.env.S3_ACCESS_KEY_ID &&
@@ -59,7 +59,7 @@ export default buildConfig({
               accessKeyId: process.env.S3_ACCESS_KEY_ID!,
               secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
             },
-            // R2 requires path-style addressing
+            // Supabase / R2 / MinIO all require path-style addressing
             forcePathStyle: true,
           },
         }),
