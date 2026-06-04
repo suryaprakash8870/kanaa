@@ -38,10 +38,10 @@ function renderNode(node: LexicalNode, key: number): React.ReactNode {
     case "paragraph":
       return <p key={key} style={{ margin: "0 0 1.2em", lineHeight: 1.8 }}>{children.length ? children : <br />}</p>;
     case "heading": {
-      const tag = (el.tag ?? "h2") as keyof React.JSX.IntrinsicElements;
+      const tag = (el.tag ?? "h2") as "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
       const sizes: Record<string, string> = { h1: "2em", h2: "1.55em", h3: "1.25em", h4: "1.1em", h5: "1em", h6: "0.9em" };
       const Tag = tag;
-      return <Tag key={key} style={{ margin: "1.6em 0 0.5em", fontWeight: 700, lineHeight: 1.25, fontSize: sizes[tag as string] ?? "1.2em" }}>{children}</Tag>;
+      return <Tag key={key} style={{ margin: "1.6em 0 0.5em", fontWeight: 700, lineHeight: 1.25, fontSize: sizes[tag] ?? "1.2em" }}>{children}</Tag>;
     }
     case "quote":
       return (
