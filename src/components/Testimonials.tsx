@@ -6,28 +6,18 @@ import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 const reviews = [
   {
     name: "Meera Krishnan",
-    rating: 4,
-    text: "I really appreciate how authentic Kanaa pickles taste. The mango is sun-cured properly, the oil is cold-pressed, and you can taste the love in every spoon.",
+    rating: 5,
+    text: "Kanaa products truly remind me of homemade food. The flavours feel authentic, comforting, and full of freshness.",
   },
   {
     name: "Arjun Sathyamurthy",
     rating: 5,
-    text: "Finally a brand that doesn't lie about 'no preservatives.' Fresh, clean, vibrant — and they ship fast. Already on my fourth jar this quarter.",
+    text: "The soup mixes are perfect for busy days. Quick to make, healthy, and incredibly satisfying.",
   },
   {
     name: "Priya Nandakumar",
     rating: 5,
-    text: "The Lime & Ginger is unlike anything I've tried. Aged 30 days in terracotta — you can actually taste the depth. Goes with everything.",
-  },
-  {
-    name: "Karthik Raman",
-    rating: 4,
-    text: "Tastes exactly like my grandmother's recipe from Madurai. Every spoonful brings back childhood memories.",
-  },
-  {
-    name: "Lakshmi Iyer",
-    rating: 5,
-    text: "Bold, balanced and beautifully spiced. Kanaa has earned a permanent spot on our dinner table.",
+    text: "I love how Kanaa combines traditional taste with modern convenience. It feels like home in every meal.",
   },
 ];
 
@@ -117,7 +107,7 @@ export default function Testimonials() {
           style={{
             fontFamily: "var(--font-bricolage), system-ui, sans-serif",
             fontWeight: 800,
-            fontSize: "clamp(88px, 22vw, 360px)",
+            fontSize: "clamp(76px, 18vw, 300px)",
             lineHeight: 0.86,
             letterSpacing: "-0.045em",
             textAlign: "center",
@@ -126,6 +116,7 @@ export default function Testimonials() {
             textTransform: "lowercase",
             userSelect: "none",
             opacity: 1,
+            transform: "translateY(-16%)",
           }}
         >
           feed

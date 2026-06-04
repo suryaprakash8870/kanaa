@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 
-const links = ["Products", "Our Story", "Process", "Track", "Contact"];
+const links = ["Products", "Blog", "Our Story", "Process", "Track", "Contact"];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -23,11 +23,13 @@ export default function Navbar() {
   const scrollTo = (id: string) => {
     setMenuOpen(false);
     // Dedicated pages — use Next client-side router so the phone doesn't reload.
-    if (id === "Products") return router.push("/products");
-    if (id === "Contact")  return router.push("/contact");
-    if (id === "Track")    return router.push("/track");
+    if (id === "Products")  return router.push("/products");
+    if (id === "Blog")      return router.push("/blog");
+    if (id === "Our Story") return router.push("/about");
+    if (id === "Contact")   return router.push("/contact");
+    if (id === "Track")     return router.push("/track");
 
-    // In-page anchors (Our Story, Process).
+    // In-page anchors (Process).
     const targetId = id.toLowerCase().replace(/\s+/g, "-");
     if (pathname !== "/") {
       router.push(`/#${targetId}`);

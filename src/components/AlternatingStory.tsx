@@ -10,43 +10,34 @@ gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const sections = [
   {
-    heading: "Sun-dried, not sun-shortcut.",
-    body: "Every mango, chili, and spice is sun-cured in the open Kongu air for days — the old, slow way.",
-    bg: "#DFF0D8",
-    color: "#D94862",
-    image:
-      "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=900&q=80&auto=format&fit=crop",
-    imageFallback: "https://picsum.photos/seed/sundried/900/720",
-    alt: "Sun-dried spices and ingredients",
-  },
-  {
-    heading: "Cold-pressed oils only.",
-    body: "Gingelly, peanut, and coconut — crushed by stone, never refined. Preserves aroma, flavor, and nutrients.",
+    heading: "Cold Pressed Gingelly Oil",
+    body: "Made using traditional extraction methods, cold pressed gingelly oil is naturally rich in aroma and nutrients. It adds authentic flavour and depth to every recipe while preserving the wholesome essence of South Indian cooking.",
     bg: "#DFF0D8",
     color: "#6B4022",
     image:
       "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=900&q=80&auto=format&fit=crop",
-    imageFallback: "https://picsum.photos/seed/oil/900/720",
-    alt: "Cold-pressed oil",
+    imageFallback: "https://picsum.photos/seed/gingellyoil/900/720",
+    alt: "Cold pressed gingelly oil",
   },
   {
-    heading: "Hand-ground masalas.",
-    body: "Eleven spices, ground on granite. No factory grinder ever touches a Kanaa jar.",
+    heading: "Tamarind",
+    body: "A timeless ingredient in South Indian cuisine, tamarind brings the perfect balance of tanginess and richness. Its bold flavour enhances traditional recipes and adds comforting familiarity to every meal.",
+    bg: "#DFF0D8",
+    color: "#D94862",
+    image:
+      "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=900&q=80&auto=format&fit=crop",
+    imageFallback: "https://picsum.photos/seed/tamarind/900/720",
+    alt: "Tamarind",
+  },
+  {
+    heading: "Garlic",
+    body: "Fresh garlic adds warmth, flavour, and natural nourishment to our food mixes and soups. Widely valued in traditional cooking, it helps create meals that are both flavourful and wholesome.",
     bg: "#DFF0D8",
     color: "#3D5A2D",
     image:
       "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=900&q=80&auto=format&fit=crop",
-    imageFallback: "https://picsum.photos/seed/masala/900/720",
-    alt: "Indian spices and curry",
-  },
-  {
-    heading: "Aged in terracotta.",
-    body: "Thirty days in clay pots. The ferment breathes, the flavor deepens, the grandma's recipe survives.",
-    bg: "#DFF0D8",
-    color: "#5F3D8A",
-    image: "https://picsum.photos/seed/terracotta/900/720",
-    imageFallback: "https://picsum.photos/seed/clay/900/720",
-    alt: "Terracotta clay pots",
+    imageFallback: "https://picsum.photos/seed/garlic/900/720",
+    alt: "Fresh garlic",
   },
 ];
 
@@ -155,7 +146,7 @@ export default function AlternatingStory() {
               marginBottom: 14,
             }}
           >
-            How we make it
+            What we use
           </p>
           <h2
             style={{
@@ -170,7 +161,7 @@ export default function AlternatingStory() {
               margin: 0,
             }}
           >
-            Four rituals, zero shortcuts.
+            Wholesome ingredients, nothing else.
           </h2>
           <p
             style={{
@@ -184,8 +175,8 @@ export default function AlternatingStory() {
               marginInline: "auto",
             }}
           >
-            The old, slow way — sun, stone, clay, and patience. Here&apos;s what
-            actually happens before a Kanaa jar reaches your pantry.
+            Real, traditional ingredients chosen for flavour and nourishment —
+            the wholesome foundation behind every Kanaa product.
           </p>
         </div>
 
@@ -266,7 +257,7 @@ export default function AlternatingStory() {
                     opacity: 0.85,
                   }}
                 >
-                  The Kanaa Way · 0{i + 1}
+                  Our Ingredients · 0{i + 1}
                 </p>
                 <h2
                   style={{

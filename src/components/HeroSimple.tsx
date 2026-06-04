@@ -94,29 +94,81 @@ export default function HeroSimple() {
             maxWidth: 820,
           }}
         >
-          <span style={{ display: "block" }}>Your pantry&apos;s new</span>
-          <span style={{ display: "block" }}>main character.</span>
+          <span style={{ display: "block" }}>Homemade goodness for</span>
+          <span style={{ display: "block" }}>everyday healthy living.</span>
         </h1>
-        <Link
-          href="/products"
+
+        <p
           style={{
-            display: "inline-block",
-            marginTop: 28,
-            background: CREAM,
-            color: GREEN_DARK,
-            padding: "16px 32px",
-            borderRadius: 100,
-            textDecoration: "none",
             fontFamily: "var(--font-dm-sans)",
-            fontWeight: 700,
-            fontSize: 14,
-            letterSpacing: 1,
-            textTransform: "uppercase",
-            boxShadow: "0 14px 40px rgba(0,0,0,0.25)",
+            fontWeight: 600,
+            fontSize: "clamp(15px, 1.5vw, 19px)",
+            lineHeight: 1.5,
+            margin: "20px 0 0",
+            maxWidth: 600,
+            textShadow: "0 2px 14px rgba(0,0,0,0.45)",
           }}
         >
-          Shop the collection →
-        </Link>
+          Traditional South Indian flavours crafted with wholesome ingredients,
+          made simple for modern lifestyles.
+        </p>
+        <p
+          style={{
+            fontFamily: "var(--font-dm-sans)",
+            fontWeight: 400,
+            fontSize: "clamp(13px, 1.1vw, 15px)",
+            lineHeight: 1.65,
+            margin: "12px 0 0",
+            maxWidth: 600,
+            color: "rgba(255,244,216,0.82)",
+            textShadow: "0 2px 12px rgba(0,0,0,0.5)",
+          }}
+        >
+          From flavourful thokkus and traditional kulambu mixes to healthy soups
+          and snacks, every product is made to comfort, nourish, and simplify
+          your meals.
+        </p>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginTop: 28 }}>
+          <Link
+            href="/products"
+            style={{
+              display: "inline-block",
+              background: CREAM,
+              color: GREEN_DARK,
+              padding: "16px 32px",
+              borderRadius: 100,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans)",
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: 1,
+              textTransform: "uppercase",
+              boxShadow: "0 14px 40px rgba(0,0,0,0.25)",
+            }}
+          >
+            Explore Products →
+          </Link>
+          <Link
+            href="/about"
+            style={{
+              display: "inline-block",
+              background: "transparent",
+              color: CREAM,
+              border: `1.5px solid ${CREAM}`,
+              padding: "16px 30px",
+              borderRadius: 100,
+              textDecoration: "none",
+              fontFamily: "var(--font-dm-sans)",
+              fontWeight: 700,
+              fontSize: 14,
+              letterSpacing: 1,
+              textTransform: "uppercase",
+            }}
+          >
+            Taste Homemade Health
+          </Link>
+        </div>
       </div>
 
       {/* Bottom yellow marquee strip */}

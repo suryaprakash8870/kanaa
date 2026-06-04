@@ -20,8 +20,8 @@ const channels = [
   {
     key: "whatsapp",
     label: "WhatsApp",
-    value: "+91 98765 43210",
-    href: "https://wa.me/919876543210",
+    value: "+91 89398 74391",
+    href: "https://wa.me/918939874391",
     hint: "Fastest — usually back in an hour",
     tint: "#E7F8EC",
     iconBg: "linear-gradient(135deg, #25D366 0%, #128C7E 100%)",
@@ -34,8 +34,8 @@ const channels = [
   {
     key: "email",
     label: "Email",
-    value: "hello@kanaa.co",
-    href: "mailto:hello@kanaa.co",
+    value: "kanaafoods@gmail.com",
+    href: "mailto:kanaafoods@gmail.com",
     hint: "We reply within a working day",
     tint: "#FFF0EB",
     iconBg: "linear-gradient(135deg, #F5C03A 0%, #E8553F 100%)",
@@ -226,7 +226,7 @@ export default function ContactPage() {
                 marginBottom: 18,
               }}
             >
-              pass us a note.
+              get in touch.
             </h1>
             <p
               style={{
@@ -239,8 +239,8 @@ export default function ContactPage() {
                 lineHeight: 1.6,
               }}
             >
-              Drop a question, a recipe, or just a hello — it lands on the same table where we
-              grind the masala every Monday.
+              We&apos;d love to hear from you. Whether you have questions, feedback, or
+              simply want to know more about Kanaa, feel free to connect with us.
             </p>
           </div>
 

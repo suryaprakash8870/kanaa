@@ -1,50 +1,45 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import SectionWave from "./SectionWave";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   {
     number: "01",
-    chip: "Sourced at Peak",
-    title: "Handpicked at the perfect sun.",
+    chip: "Homemade Taste",
+    title: "Tastes just like home.",
     body:
-      "We partner with small farms across Tamil Nadu and Kerala — sourcing only seasonal produce at its ripest. Mangoes in April. Limes in June. Patience, not factory schedules.",
+      "Crafted with traditional recipes inspired by authentic South Indian home cooking.",
     image:
       "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=1200&q=80&auto=format&fit=crop",
     accent: "#C9A24A",
   },
   {
     number: "02",
-    chip: "Cold-Pressed Oil",
-    title: "Crushed by stone, never heat.",
+    chip: "Healthy Ingredients",
+    title: "Wholesome by design.",
     body:
-      "Our gingelly, peanut, and coconut oils are extracted without heat — so every nutrient, aroma, and flavour stays intact. Zero refined oils. Zero compromises.",
+      "Made using carefully selected ingredients without compromising on quality or flavour.",
     image:
       "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=1200&q=80&auto=format&fit=crop",
     accent: "#8C6820",
   },
   {
     number: "03",
-    chip: "Hand-Ground Masalas",
-    title: "Eleven spices. One stone. Every morning.",
+    chip: "Quick & Convenient",
+    title: "Ready in minutes.",
     body:
-      "Whole spices — coriander, fenugreek, mustard, chili — ground fresh on granite the morning of preparation. No pre-mixed masalas. Just grandmother's kitchen.",
+      "Designed for busy lifestyles with easy-to-prepare products that save time.",
     image:
       "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=1200&q=80&auto=format&fit=crop",
     accent: "#3D5A2D",
   },
   {
     number: "04",
-    chip: "Hand-Jarred & Rested",
-    title: "Jarred by hand. Rested in glass.",
+    chip: "Comfort in Every Meal",
+    title: "Comfort, every day.",
     body:
-      "Every jar is packed by hand, sealed airtight, and rested for 24 to 72 hours before dispatch — so the flavours develop beautifully on their own terms.",
+      "Food that feels warm, familiar, nourishing, and satisfying every single day.",
     image:
       "https://images.unsplash.com/photo-1596797038530-2c107229654b?w=1200&q=80&auto=format&fit=crop",
     accent: "#B8420F",
@@ -128,7 +123,7 @@ export default function Process() {
               marginBottom: 12,
             }}
           >
-            The Process
+            Why Kanaa
           </p>
           <h2
             style={{
@@ -141,8 +136,8 @@ export default function Process() {
               margin: 0,
             }}
           >
-            Made the{" "}
-            <span style={{ fontStyle: "italic", color: "#4FB83A" }}>old way.</span>
+            Made for{" "}
+            <span style={{ fontStyle: "italic", color: "#4FB83A" }}>everyday living.</span>
           </h2>
           <p
             style={{
@@ -156,8 +151,8 @@ export default function Process() {
               marginInline: "auto",
             }}
           >
-            Four unhurried steps between the farm and your table — the way your
-            grandmother&apos;s grandmother did it.
+            Homemade taste, healthy ingredients, and everyday convenience —
+            crafted to bring comfort to every meal.
           </p>
         </div>
 
@@ -346,25 +341,67 @@ export default function Process() {
 }
 
 function ProcessDoodles({ sectionRef }: { sectionRef: React.RefObject<HTMLDivElement | null> }) {
-  // One single continuous snaking doodle that runs down the whole section,
-  // behind the content. The stroke fills progressively as the user scrolls
-  // through the section.
   const stroke = "#1F4A33";
+  const pathRef = useRef<SVGPathElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef as React.RefObject<HTMLElement>,
-    // Start drawing when section top hits bottom of viewport,
-    // finish when section bottom hits top of viewport.
-    offset: ["start end", "end start"],
-  });
-  // Smooth out the scroll progress
-  const smoothed = useSpring(scrollYProgress, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.4,
-  });
-  // Map 0 → 1 scroll progress into pathLength
-  const pathLength = useTransform(smoothed, [0.1, 0.9], [0, 1]);
+  useEffect(() => {
+    const section = sectionRef.current;
+    const p = pathRef.current;
+    if (!section || !p) return;
+
+    const len = p.getTotalLength();
+    p.style.strokeDasharray = `${len}`;
+    p.style.strokeDashoffset = `${len}`;
+
+    let ticking = false;
+    let inView = false;
+
+    const update = () => {
+      ticking = false;
+      const rect = section.getBoundingClientRect();
+      const vh = window.innerHeight;
+      // progress: 0 when section top reaches bottom of viewport,
+      // 1 when section bottom reaches top of viewport.
+      const total = rect.height + vh;
+      const travelled = vh - rect.top;
+      let t = travelled / total;
+      // start drawing a bit later and finish a bit sooner for a nicer feel
+      t = (t - 0.1) / 0.8;
+      if (t < 0) t = 0;
+      if (t > 1) t = 1;
+      p.style.strokeDashoffset = `${len * (1 - t)}`;
+    };
+
+    const onScroll = () => {
+      if (!inView || ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          inView = e.isIntersecting;
+          if (inView) update();
+        });
+      },
+      { threshold: 0 },
+    );
+    io.observe(section);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    update();
+
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [sectionRef]);
+
+  const d =
+    "M -80 120 C 180 60, 260 300, 120 420 C -20 540, 140 720, 340 680 C 540 640, 620 860, 460 1000 C 300 1140, 500 1300, 720 1240 C 940 1180, 1020 1360, 860 1520 C 700 1680, 900 1840, 700 1960 C 520 2080, 380 2140, 420 2260 C 440 2340, 480 2400, 500 2500";
 
   return (
     <div
@@ -387,9 +424,8 @@ function ProcessDoodles({ sectionRef }: { sectionRef: React.RefObject<HTMLDivEle
           height: "100%",
         }}
       >
-        {/* faint ghost path so the shape is still hinted before it fills */}
         <path
-          d="M -80 120 C 180 60, 260 300, 120 420 C -20 540, 140 720, 340 680 C 540 640, 620 860, 460 1000 C 300 1140, 500 1300, 720 1240 C 940 1180, 1020 1360, 860 1520 C 700 1680, 900 1840, 700 1960 C 520 2080, 380 2140, 420 2260 C 440 2340, 480 2400, 500 2500"
+          d={d}
           fill="none"
           stroke={stroke}
           strokeOpacity="0.06"
@@ -397,16 +433,15 @@ function ProcessDoodles({ sectionRef }: { sectionRef: React.RefObject<HTMLDivEle
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        {/* animated drawing path */}
-        <motion.path
-          d="M -80 120 C 180 60, 260 300, 120 420 C -20 540, 140 720, 340 680 C 540 640, 620 860, 460 1000 C 300 1140, 500 1300, 720 1240 C 940 1180, 1020 1360, 860 1520 C 700 1680, 900 1840, 700 1960 C 520 2080, 380 2140, 420 2260 C 440 2340, 480 2400, 500 2500"
+        <path
+          ref={pathRef}
+          d={d}
           fill="none"
           stroke={stroke}
           strokeOpacity="0.18"
           strokeWidth="90"
           strokeLinecap="round"
           strokeLinejoin="round"
-          style={{ pathLength }}
         />
       </svg>
     </div>

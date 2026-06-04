@@ -75,9 +75,9 @@ export default function ProductSpotlightClient({ products }: { products: Spotlig
           padding: "0 20px",
         }}
       >
-        Not so average pantry staples
+        Homemade favourites
         <br />
-        and entertaining essentials
+        for everyday healthy meals
       </h2>
 
       {/* Carousel band */}

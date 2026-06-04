@@ -7,6 +7,7 @@ import About from "@/components/About";
 import AlternatingStory from "@/components/AlternatingStory";
 // import FlavorCarousel from "@/components/FlavorCarousel"; // replaced by ProductSpotlight
 import ProductSpotlight from "@/components/ProductSpotlight";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import AtOurTable from "@/components/AtOurTable";
 import Process from "@/components/Process";
 import Testimonials from "@/components/Testimonials";
@@ -27,6 +28,7 @@ export default function Home() {
         {/* <FlavorCarousel /> — replaced by ProductSpotlight */}
         <AtOurTable />
         <Process />
+        <FeaturedProducts />
         {/* <SkyDiveFinale /> */}
         <Testimonials />
         <CTABanner />
