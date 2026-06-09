@@ -1,18 +1,10 @@
 import Navbar from "@/components/Navbar";
-// import OfferBanner from "@/components/OfferBanner"; // removed per request
-// import ScrollHero from "@/components/ScrollHero"; // disabled — using HeroSimple instead
 import HeroSimple from "@/components/HeroSimple";
-// import MarqueeBar from "@/components/MarqueeBar"; // duplicate of hero marquee — disabled
 import About from "@/components/About";
 import AlternatingStory from "@/components/AlternatingStory";
-// import FlavorCarousel from "@/components/FlavorCarousel"; // replaced by ProductSpotlight
-import ProductSpotlight from "@/components/ProductSpotlight";
-import FeaturedProducts from "@/components/FeaturedProducts";
-import AtOurTable from "@/components/AtOurTable";
 import Process from "@/components/Process";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import Testimonials from "@/components/Testimonials";
-// import SkyDiveFinale from "@/components/SkyDiveFinale"; // disabled — redundant CTA, heavy 3D
-import CTABanner from "@/components/CTABanner";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -20,18 +12,12 @@ export default function Home() {
     <>
       <Navbar />
       <main>
-        <HeroSimple />
-        {/* <MarqueeBar /> — duplicate of hero marquee */}
-        <About />
-        <ProductSpotlight />
-        <AlternatingStory />
-        {/* <FlavorCarousel /> — replaced by ProductSpotlight */}
-        <AtOurTable />
-        <Process />
-        <FeaturedProducts />
-        {/* <SkyDiveFinale /> */}
-        <Testimonials />
-        <CTABanner />
+        {/* 1 */} <HeroSimple />
+        {/* 2 */} <About />
+        {/* 3 */} <AlternatingStory />      {/* What We Use */}
+        {/* 4 */} <Process />               {/* Why Kanaa */}
+        {/* 5 */} <FeaturedProducts />
+        {/* 6 */} <Testimonials />
       </main>
       <Footer />
     </>
