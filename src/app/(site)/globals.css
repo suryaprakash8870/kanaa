@@ -15,6 +15,10 @@
 :root {
   --background: #FAF7F2;
   --foreground: #214D34;
+  /* Total fixed-header height (navbar + offer banner). OfferBanner overrides
+     this at runtime: nav-only (56px) when there are no active offers, or
+     nav + banner (116px) when the banner is showing. */
+  --hdr: 116px;
 }
 
 * {

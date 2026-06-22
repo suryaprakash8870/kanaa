@@ -18,7 +18,7 @@ export default function RecipesPage() {
   return (
     <>
       <Navbar />
-      <div style={{ height: 96 }} />
+      <div style={{ height: "var(--hdr)" }} />
 
       <main style={{ background: CREAM, minHeight: "100vh" }}>
         {/* ── MASTHEAD ── */}

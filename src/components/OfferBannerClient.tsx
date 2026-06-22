@@ -7,6 +7,7 @@ export type Offer = {
   text: string;
   cta: string;
   ctaUrl?: string;
+  imageUrl?: string;
 };
 
 const GREEN = "#1F4A33";
@@ -36,13 +37,13 @@ export default function OfferBannerClient({ offers }: { offers: Offer[] }) {
       onMouseLeave={() => setPaused(false)}
       style={{
         position: "fixed",
-        top: 0,
+        top: 56,
         left: 0,
         right: 0,
-        zIndex: 60,
+        zIndex: 45,
         background: GREEN,
         color: CREAM,
-        height: 40,
+        height: 60,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -79,7 +80,24 @@ export default function OfferBannerClient({ offers }: { offers: Offer[] }) {
           textOverflow: "ellipsis",
         }}
       >
-        <span aria-hidden style={{ fontSize: 16, lineHeight: 1 }}>{o.icon}</span>
+        {o.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={o.imageUrl}
+            alt=""
+            aria-hidden
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 8,
+              objectFit: "cover",
+              flexShrink: 0,
+              border: "1px solid rgba(255,244,216,0.25)",
+            }}
+          />
+        ) : (
+          <span aria-hidden style={{ fontSize: 18, lineHeight: 1 }}>{o.icon}</span>
+        )}
         <span
           key={idx}
           style={{

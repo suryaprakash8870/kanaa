@@ -30,7 +30,7 @@ export default async function Success({
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(96px + clamp(40px, 6vw, 90px))",
+          paddingTop: "calc(var(--hdr) + clamp(40px, 6vw, 90px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",

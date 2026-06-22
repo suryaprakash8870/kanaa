@@ -61,7 +61,7 @@ export default async function BlogPage() {
   return (
     <>
       <Navbar />
-      <div style={{ height: 96 }} />
+      <div style={{ height: "var(--hdr)" }} />
 
       <main style={{ background: "#FAF7F2", minHeight: "100vh" }}>
         {/* ── MASTHEAD ── */}

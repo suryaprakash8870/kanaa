@@ -130,7 +130,7 @@ export default async function TrackPage({
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(96px + clamp(40px, 6vw, 80px))",
+          paddingTop: "calc(var(--hdr) + clamp(40px, 6vw, 80px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",

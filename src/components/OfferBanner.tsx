@@ -4,14 +4,16 @@ import OfferBannerClient, { type Offer } from "./OfferBannerClient";
 
 export const revalidate = 60;
 
-const FALLBACK: Offer[] = [
-  { icon: "🚚", text: "Free shipping across India on orders above ₹499", cta: "Shop now" },
-  { icon: "✨", text: "First order? Use code KANAA10 for 10% off", cta: "Apply code" },
-  { icon: "🍲", text: "New: healthy 5-minute soup mixes", cta: "Try them" },
-  { icon: "🥄", text: "Homemade thokkus & kulambu mixes — made fresh", cta: "Explore" },
-  { icon: "📦", text: "Subscribe & save 15% on every monthly delivery", cta: "Subscribe" },
-];
+// Fixed-header geometry. Pages reserve `--hdr` of top space; we set it here so
+// the space collapses to nav-only when there is no banner to show.
+const NAV_H = 56;
+const BANNER_H = 60;
 
+// The banner is fully CMS-controlled: it shows ONLY the active offers from the
+// Offers collection. Deactivate every offer (or set them outside their
+// start/end window) and the banner disappears entirely — there are no
+// hardcoded fallback offers. On a DB error we also show nothing rather than
+// stale defaults.
 async function fetchOffers(): Promise<Offer[]> {
   try {
     const payload = await getPayload({ config });
@@ -27,20 +29,33 @@ async function fetchOffers(): Promise<Offer[]> {
       },
       sort: "order",
       limit: 20,
+      depth: 1, // populate the `image` upload so we get its URL
     });
-    if (!docs.length) return FALLBACK;
-    return docs.map((d) => ({
-      icon: String(d.icon ?? "✨"),
-      text: String(d.text ?? ""),
-      cta: String(d.ctaLabel ?? "Learn more"),
-      ctaUrl: (d.ctaUrl as string) ?? "#products",
-    }));
+    return docs.map((d) => {
+      const img = d.image as { url?: string } | string | null | undefined;
+      const imageUrl =
+        img && typeof img === "object" && typeof img.url === "string" ? img.url : undefined;
+      return {
+        icon: String(d.icon ?? "✨"),
+        text: String(d.text ?? ""),
+        cta: String(d.ctaLabel ?? "Learn more"),
+        ctaUrl: (d.ctaUrl as string) ?? "#products",
+        imageUrl,
+      };
+    });
   } catch {
-    return FALLBACK;
+    return [];
   }
 }
 
 export default async function OfferBanner() {
   const offers = await fetchOffers();
-  return <OfferBannerClient offers={offers} />;
+  const hdr = NAV_H + (offers.length ? BANNER_H : 0);
+  return (
+    <>
+      {/* Collapse the reserved header space when there is no banner to show. */}
+      <style>{`:root{--hdr:${hdr}px}`}</style>
+      <OfferBannerClient offers={offers} />
+    </>
+  );
 }

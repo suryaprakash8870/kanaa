@@ -183,7 +183,7 @@ export default function AccountPage() {
         style={{
           background: PAGE,
           minHeight: "100vh",
-          paddingTop: "calc(96px + clamp(28px, 5vw, 56px))",
+          paddingTop: "calc(var(--hdr) + clamp(28px, 5vw, 56px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
         }}
       >
@@ -462,8 +462,8 @@ function LoginScreen({
 
       <style>{`
         .lg-wrap {
-          margin-top: 96px;
-          min-height: calc(100vh - 96px);
+          margin-top: var(--hdr);
+          min-height: calc(100vh - var(--hdr));
           position: relative;
           overflow: hidden;
           background: ${ORANGE};

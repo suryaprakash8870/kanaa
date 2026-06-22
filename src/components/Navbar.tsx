@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 
-const links = ["Products", "Blog", "Our Story", "Process", "Track", "Contact", "Account"];
+const links = ["Products", "Blog", "Our Story", "Process", "Reviews", "Track", "Contact", "Account"];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -27,6 +27,7 @@ export default function Navbar() {
     if (id === "Blog")      return router.push("/blog");
     if (id === "Our Story") return router.push("/about");
     if (id === "Contact")   return router.push("/contact");
+    if (id === "Reviews")   return router.push("/reviews");
     if (id === "Track")     return router.push("/track");
     if (id === "Account")   return router.push("/account");
 
@@ -45,7 +46,7 @@ export default function Navbar() {
       <header
         style={{
           position: "fixed",
-          top: 40,
+          top: 0,
           left: 0,
           right: 0,
           zIndex: 50,

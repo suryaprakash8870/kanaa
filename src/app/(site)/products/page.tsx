@@ -262,7 +262,7 @@ export default async function ProductsPage() {
         <style>{`
           .pr-cover {
             position: relative;
-            margin-top: 96px;
+            margin-top: var(--hdr);
             width: 100%;
             height: clamp(280px, 40vh, 500px);
             overflow: hidden;

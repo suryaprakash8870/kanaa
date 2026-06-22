@@ -39,8 +39,8 @@ export default function HeroSimple() {
       ref={ref}
       style={{
         position: "relative",
-        marginTop: 96,
-        height: "calc(100vh - 96px)",
+        marginTop: "var(--hdr)",
+        height: "calc(100vh - var(--hdr))",
         minHeight: 600,
         width: "100%",
         overflow: "hidden",

@@ -15,7 +15,7 @@ const BREVO_ENDPOINT = "https://api.brevo.com/v3/smtp/email";
 const FROM_EMAIL = process.env.EMAIL_FROM ?? "kanaafoods@gmail.com";
 const FROM_NAME = process.env.EMAIL_FROM_NAME ?? "Kanaa";
 
-/** Public base URL for building links (track page, etc.). */
+/** Public base URL for building links (track page, logo, etc.). */
 export function serverUrl(): string {
   return (
     process.env.NEXT_PUBLIC_SERVER_URL?.replace(/\/$/, "") ??
@@ -80,12 +80,17 @@ function redactEmail(email: string): string {
 }
 
 // ──────────────────────────────────────────────────────────────────────────
-// Templates
+// Brand + building blocks
 // ──────────────────────────────────────────────────────────────────────────
 
-const INK = "#1F4A33";
-const CLAY = "#C0301F";
+const INK = "#1F4A33"; // forest green
+const CLAY = "#C0301F"; // brand red
+const ACCENT = "#4FB83A"; // leaf green
+const GOLD = "#E5B43A";
+const CREAM = "#FFF4D8";
 const PAGE = "#FAF7F2";
+const MUTED = "#8a8a7e";
+const LOGO_URL = `${serverUrl()}/labels/Logo.png`;
 
 type OrderItem = {
   productName: string;
@@ -124,98 +129,160 @@ function trackLink(orderNumber: string): string {
   return `${serverUrl()}/track?order=${encodeURIComponent(orderNumber)}`;
 }
 
-function shell(inner: string): string {
-  return `<div style="background:${PAGE};padding:32px 0;font-family:Arial,Helvetica,sans-serif;color:${INK};">
-  <div style="max-width:560px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;border:1px solid #ece6db;">
-    <div style="background:${INK};padding:20px 28px;">
-      <span style="color:#FFF4D8;font-size:20px;font-weight:700;letter-spacing:1px;">Kanaa</span>
-    </div>
-    <div style="padding:28px;">${inner}</div>
-    <div style="padding:18px 28px;border-top:1px solid #f0eadf;color:#8a8a7e;font-size:12px;">
-      Homemade healthy food, made with love. • This is a transactional message about your order.
-    </div>
-  </div>
-</div>`;
+/** Coloured status pill. */
+function badge(label: string, color: string): string {
+  return `<span style="display:inline-block;background:${color};color:#ffffff;font-size:12px;font-weight:700;letter-spacing:0.4px;padding:6px 14px;border-radius:100px;text-transform:uppercase;">${escapeHtml(label)}</span>`;
+}
+
+/** Pill-shaped CTA button (table-based for Outlook). */
+function button(href: string, label: string): string {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;"><tr><td style="border-radius:100px;background:${CLAY};">
+    <a href="${href}" style="display:inline-block;padding:13px 30px;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;font-family:Arial,Helvetica,sans-serif;border-radius:100px;">${escapeHtml(label)} &nbsp;&rarr;</a>
+  </td></tr></table>`;
+}
+
+/** Outer wrapper with logo header + footer. */
+function shell(inner: string, preheader = ""): string {
+  return `<!doctype html><html><body style="margin:0;padding:0;background:${PAGE};">
+  ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</div>` : ""}
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${PAGE};padding:28px 12px;">
+    <tr><td align="center">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #ece6db;box-shadow:0 8px 28px rgba(31,74,51,0.07);">
+        <!-- header -->
+        <tr><td align="center" style="background:${INK};padding:22px 28px;">
+          <img src="${LOGO_URL}" alt="Kanaa" height="38" style="height:38px;width:auto;display:block;filter:brightness(0) invert(1);" />
+          <div style="color:${CREAM};font-family:Georgia,'Times New Roman',serif;font-size:13px;letter-spacing:2px;margin-top:8px;opacity:0.85;">HOMEMADE • HEALTHY • SOUTH INDIAN</div>
+        </td></tr>
+        <!-- body -->
+        <tr><td style="padding:30px 30px 8px;font-family:Arial,Helvetica,sans-serif;color:${INK};">${inner}</td></tr>
+        <!-- footer -->
+        <tr><td style="padding:22px 30px;background:#FBF7EE;border-top:1px solid #f0eadf;font-family:Arial,Helvetica,sans-serif;">
+          <div style="color:${INK};font-weight:700;font-size:14px;">Kanaa</div>
+          <div style="color:${MUTED};font-size:12px;line-height:1.7;margin-top:4px;">
+            Homemade healthy food, made with love. 🌿<br/>
+            Questions? Just reply to this email — we're happy to help.
+          </div>
+          <div style="color:#b3b0a6;font-size:11px;margin-top:10px;">
+            This is a transactional message about your order.
+          </div>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+  </body></html>`;
 }
 
 function itemsTable(items: OrderItem[]): string {
   const rows = items
     .map(
       (it) => `<tr>
-        <td style="padding:8px 0;border-bottom:1px solid #f0eadf;">
-          <strong>${escapeHtml(it.productName)}</strong>${
-            it.variantLabel ? ` <span style="color:#8a8a7e;">(${escapeHtml(it.variantLabel)})</span>` : ""
-          }<br/><span style="color:#8a8a7e;font-size:13px;">Qty ${it.qty} × ${rupees(it.unitPrice)}</span>
+        <td style="padding:10px 0;border-bottom:1px solid #f0eadf;font-family:Arial,Helvetica,sans-serif;">
+          <strong style="color:${INK};">${escapeHtml(it.productName)}</strong>${
+            it.variantLabel ? ` <span style="color:${MUTED};">(${escapeHtml(it.variantLabel)})</span>` : ""
+          }<br/><span style="color:${MUTED};font-size:13px;">Qty ${it.qty} × ${rupees(it.unitPrice)}</span>
         </td>
-        <td style="padding:8px 0;border-bottom:1px solid #f0eadf;text-align:right;white-space:nowrap;">${rupees(it.lineTotal)}</td>
+        <td style="padding:10px 0;border-bottom:1px solid #f0eadf;text-align:right;white-space:nowrap;font-family:Arial,Helvetica,sans-serif;color:${INK};font-weight:600;">${rupees(it.lineTotal)}</td>
       </tr>`,
     )
     .join("");
-  return `<table style="width:100%;border-collapse:collapse;font-size:14px;">${rows}</table>`;
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;margin-top:4px;">
+    <tr><td colspan="2" style="font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;color:${MUTED};text-transform:uppercase;padding-bottom:6px;">🧾 Your items</td></tr>
+    ${rows}
+  </table>`;
 }
 
 function totals(o: OrderEmailData): string {
   const line = (label: string, val: string, bold = false) =>
-    `<tr><td style="padding:4px 0;${bold ? "font-weight:700;" : "color:#8a8a7e;"}">${label}</td><td style="padding:4px 0;text-align:right;${bold ? "font-weight:700;" : ""}">${val}</td></tr>`;
-  return `<table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:12px;">
+    `<tr><td style="padding:5px 0;font-family:Arial,Helvetica,sans-serif;${bold ? `font-weight:700;color:${INK};font-size:15px;` : `color:${MUTED};`}">${label}</td><td style="padding:5px 0;text-align:right;font-family:Arial,Helvetica,sans-serif;${bold ? `font-weight:700;color:${INK};font-size:15px;` : `color:${INK};`}">${val}</td></tr>`;
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;font-size:14px;margin-top:14px;">
     ${line("Subtotal", rupees(o.subtotal))}
     ${line("Shipping", o.shipping > 0 ? rupees(o.shipping) : "Free")}
     ${o.discount && o.discount > 0 ? line("Discount", `−${rupees(o.discount)}`) : ""}
+    <tr><td colspan="2" style="border-top:2px solid ${INK};padding-top:6px;"></td></tr>
     ${line("Total", rupees(o.total), true)}
   </table>`;
 }
 
-function button(href: string, label: string): string {
-  return `<a href="${href}" style="display:inline-block;background:${CLAY};color:#fff;text-decoration:none;padding:12px 26px;border-radius:100px;font-weight:700;font-size:14px;">${label}</a>`;
+function addressBlock(addr: NonNullable<OrderEmailData["shippingAddress"]>): string {
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:20px;background:${PAGE};border-radius:12px;">
+    <tr><td style="padding:16px 18px;font-family:Arial,Helvetica,sans-serif;">
+      <div style="font-size:12px;font-weight:700;letter-spacing:1px;color:${MUTED};text-transform:uppercase;">📦 Shipping to</div>
+      <div style="color:${INK};font-size:14px;line-height:1.6;margin-top:6px;">
+        ${escapeHtml(addr.line1)}${addr.line2 ? `, ${escapeHtml(addr.line2)}` : ""}<br/>
+        ${escapeHtml(addr.city)}, ${escapeHtml(addr.state)} ${escapeHtml(addr.pincode)}<br/>
+        ${escapeHtml(addr.country || "India")}
+      </div>
+    </td></tr>
+  </table>`;
 }
+
+// ──────────────────────────────────────────────────────────────────────────
+// Templates
+// ──────────────────────────────────────────────────────────────────────────
 
 export function orderConfirmationEmail(o: OrderEmailData): {
   subject: string;
   html: string;
 } {
   const addr = o.shippingAddress;
+  const firstName = escapeHtml(o.customerName.split(" ")[0] || o.customerName);
   const inner = `
-    <h1 style="font-size:22px;margin:0 0 6px;">Thank you, ${escapeHtml(o.customerName.split(" ")[0] || o.customerName)}! 🌿</h1>
-    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 20px;">
-      We've received your order <strong>${escapeHtml(o.orderNumber)}</strong>. We'll verify your
-      payment and start preparing it. You'll get an update as it moves along.
+    <div align="center" style="margin-bottom:14px;">${badge("Order received", ACCENT)}</div>
+    <h1 style="font-size:23px;margin:0 0 8px;text-align:center;color:${INK};font-family:Georgia,'Times New Roman',serif;">Thank you, ${firstName}! 🌿</h1>
+    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 22px;text-align:center;">
+      We've received your order <strong style="color:${INK};">${escapeHtml(o.orderNumber)}</strong>.<br/>
+      We'll verify your payment and start preparing it.
     </p>
     ${itemsTable(o.items)}
     ${totals(o)}
-    ${
-      addr
-        ? `<p style="color:#8a8a7e;font-size:13px;line-height:1.6;margin:18px 0 0;">
-            <strong style="color:${INK};">Shipping to</strong><br/>
-            ${escapeHtml(addr.line1)}${addr.line2 ? `, ${escapeHtml(addr.line2)}` : ""}<br/>
-            ${escapeHtml(addr.city)}, ${escapeHtml(addr.state)} ${escapeHtml(addr.pincode)}<br/>
-            ${escapeHtml(addr.country || "India")}
-          </p>`
-        : ""
-    }
-    <div style="margin-top:24px;">${button(trackLink(o.orderNumber), "Track your order")}</div>
+    ${addr ? addressBlock(addr) : ""}
+    <div align="center" style="margin:28px 0 8px;">${button(trackLink(o.orderNumber), "Track your order")}</div>
   `;
   return {
     subject: `Order ${o.orderNumber} confirmed — Kanaa`,
-    html: shell(inner),
+    html: shell(inner, `Thanks ${firstName}! Your Kanaa order ${o.orderNumber} is in.`),
   };
 }
 
-const STATUS_COPY: Record<string, { subject: string; line: string }> = {
+const STATUS_COPY: Record<
+  string,
+  { subject: string; line: string; badge: string; color: string }
+> = {
   paid: {
     subject: "Payment verified",
     line: "We've verified your payment — your order is confirmed and being prepared. 🎉",
+    badge: "Paid",
+    color: ACCENT,
   },
   shipped: {
     subject: "Your order is on the way",
     line: "Good news! Your order has shipped and is on its way to you. 🚚",
+    badge: "Shipped",
+    color: GOLD,
   },
   delivered: {
     subject: "Your order was delivered",
     line: "Your order has been delivered. We hope you love it! 🌿",
+    badge: "Delivered",
+    color: ACCENT,
   },
   rejected: {
     subject: "Payment needs another look",
     line: "We couldn't verify the payment for your order. Please reply to this email or reach out on WhatsApp so we can sort it out.",
+    badge: "Action needed",
+    color: CLAY,
+  },
+  cancelled: {
+    subject: "Your order was cancelled",
+    line: "Your order has been cancelled. If this wasn't expected or you'd like to reorder, just reply to this email or reach out on WhatsApp — we're happy to help.",
+    badge: "Cancelled",
+    color: MUTED,
+  },
+  refunded: {
+    subject: "Your refund is on the way",
+    line: "We've processed a refund for your order. It can take a few business days to reflect in your account, depending on your bank. Reply to this email if you have any questions.",
+    badge: "Refunded",
+    color: INK,
   },
 };
 
@@ -225,20 +292,24 @@ export function orderStatusEmail(
 ): { subject: string; html: string } | null {
   const copy = o.status ? STATUS_COPY[o.status] : undefined;
   if (!copy) return null;
+  const firstName = escapeHtml(o.customerName.split(" ")[0] || o.customerName);
   const inner = `
-    <h1 style="font-size:22px;margin:0 0 6px;">${copy.subject}</h1>
-    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 8px;">
-      Hi ${escapeHtml(o.customerName.split(" ")[0] || o.customerName)},
-    </p>
-    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 20px;">
-      ${copy.line}
-    </p>
-    <p style="font-size:14px;margin:0 0 20px;">Order <strong>${escapeHtml(o.orderNumber)}</strong> — ${rupees(o.total)}</p>
-    <div>${button(trackLink(o.orderNumber), "View order")}</div>
+    <div align="center" style="margin-bottom:14px;">${badge(copy.badge, copy.color)}</div>
+    <h1 style="font-size:22px;margin:0 0 8px;text-align:center;color:${INK};font-family:Georgia,'Times New Roman',serif;">${escapeHtml(copy.subject)}</h1>
+    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 6px;text-align:center;">Hi ${firstName},</p>
+    <p style="color:#5a5a50;font-size:15px;line-height:1.6;margin:0 0 22px;text-align:center;">${copy.line}</p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:${PAGE};border-radius:12px;margin-bottom:8px;">
+      <tr><td style="padding:14px 18px;font-family:Arial,Helvetica,sans-serif;">
+        <span style="color:${MUTED};font-size:13px;">Order</span>
+        <strong style="color:${INK};"> ${escapeHtml(o.orderNumber)}</strong>
+        <span style="float:right;color:${INK};font-weight:700;">${rupees(o.total)}</span>
+      </td></tr>
+    </table>
+    <div align="center" style="margin:24px 0 8px;">${button(trackLink(o.orderNumber), "View order")}</div>
   `;
   return {
     subject: `Order ${o.orderNumber}: ${copy.subject} — Kanaa`,
-    html: shell(inner),
+    html: shell(inner, copy.line),
   };
 }
 

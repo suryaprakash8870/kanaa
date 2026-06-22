@@ -90,7 +90,7 @@ export default async function ProductDetail({ params }: { params: Promise<Params
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(96px + clamp(30px, 4vw, 60px))",
+          paddingTop: "calc(var(--hdr) + clamp(30px, 4vw, 60px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",
@@ -196,7 +196,7 @@ export default async function ProductDetail({ params }: { params: Promise<Params
             <div
               style={{
                 position: "sticky",
-                top: "calc(96px + 24px)",
+                top: "calc(var(--hdr) + 24px)",
               }}
               className="pd-sticky"
             >

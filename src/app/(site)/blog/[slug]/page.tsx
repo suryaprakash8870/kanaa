@@ -68,7 +68,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(96px + clamp(32px, 5vw, 64px))",
+          paddingTop: "calc(var(--hdr) + clamp(32px, 5vw, 64px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
         }}
       >

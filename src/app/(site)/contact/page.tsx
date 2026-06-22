@@ -74,7 +74,7 @@ export default function ContactPage() {
         style={{
           position: "relative",
           background: BG,
-          paddingTop: "calc(96px + clamp(28px, 5vw, 56px))",
+          paddingTop: "calc(var(--hdr) + clamp(28px, 5vw, 56px))",
           paddingBottom: "clamp(64px, 9vw, 120px)",
           textAlign: "center",
           overflow: "hidden",
