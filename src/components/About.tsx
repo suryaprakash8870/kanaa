@@ -1,434 +1,330 @@
-"use client";
+const BG = "#F4F1E4";
+const INK = "#1F4A33";
+const GREEN = "#6CA82E";
+const TERRA = "#B5642A";
+const HIGHLIGHT = "#4A7A2D";
+const BODY = "#3A4438";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SectionWave from "./SectionWave";
+const SERIF = "var(--font-playfair), Georgia, serif";
+const HAND = "var(--font-caveat), cursive";
+const SANS = "var(--font-dm-sans), sans-serif";
 
-gsap.registerPlugin(ScrollTrigger);
-
-const stats = [
-  { value: "3+", label: "Generations" },
-  { value: "100%", label: "Natural" },
-  { value: "0", label: "Preservatives" },
-  { value: "12+", label: "Varieties" },
+const timeline = [
+  {
+    title: "Rooted in Tradition",
+    body: "Inspired by timeless South Indian recipes.",
+    lead: true,
+    icon: (
+      <g stroke={INK} strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 21v-7" />
+        <path d="M12 14c0-3 2-5 5-5 0 3-2 5-5 5z" />
+        <path d="M12 16c0-3-2-5-5-5 0 3 2 5 5 5z" />
+      </g>
+    ),
+  },
+  {
+    title: "Past",
+    body: "Traditions passed down with love.",
+    icon: (
+      <g stroke={INK} strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 11l8-6 8 6" />
+        <path d="M6 10v9h12v-9" />
+        <path d="M10 19v-5h4v5" />
+      </g>
+    ),
+  },
+  {
+    title: "Present",
+    body: "Made with care for today's families.",
+    icon: (
+      <g stroke={INK} strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />
+      </g>
+    ),
+  },
+  {
+    title: "Future",
+    body: "Bringing authentic home food to generations ahead.",
+    icon: (
+      <g stroke={INK} strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 21c0-5 0-9 0-9" />
+        <path d="M12 12c-4 0-7-2-7-6 4 0 7 2 7 6z" />
+        <path d="M12 14c4 0 7-3 7-7-4 0-7 3-7 7z" />
+      </g>
+    ),
+  },
 ];
 
 export default function About() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Eyebrow
-      gsap.from(".abt-eyebrow", {
-        y: 20,
-        opacity: 0,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".abt-eyebrow", start: "top 85%", once: true },
-      });
-      // Headline words — stagger each line
-      gsap.from(".abt-headline", {
-        y: 60,
-        opacity: 0,
-        duration: 1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".abt-headline", start: "top 88%", once: true },
-      });
-      // Body paragraphs
-      gsap.from(".abt-body > *", {
-        y: 30,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".abt-body", start: "top 88%", once: true },
-      });
-      // Stats
-      gsap.from(".abt-stat", {
-        y: 30,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: { trigger: ".abt-stats", start: "top 88%", once: true },
-      });
-      // Image panel
-      gsap.fromTo(
-        ".abt-img-panel",
-        { clipPath: "inset(0 100% 0 0)", scale: 1.08 },
-        {
-          clipPath: "inset(0 0% 0 0)",
-          scale: 1,
-          duration: 1.3,
-          ease: "power3.inOut",
-          scrollTrigger: { trigger: ".abt-img-panel", start: "top 80%", once: true },
-        }
-      );
-      // Vertical text
-      gsap.from(".abt-vert-text", {
-        opacity: 0,
-        duration: 1.2,
-        delay: 0.5,
-        ease: "power2.out",
-        scrollTrigger: { trigger: ".abt-img-panel", start: "top 80%", once: true },
-      });
-    }, sectionRef);
-    return () => ctx.revert();
-  }, []);
-
   return (
     <section
       id="our-story"
-      ref={sectionRef}
       style={{
         position: "relative",
-        background: "#FAF7F2",
+        background: BG,
         overflow: "hidden",
+        padding: "clamp(56px,8vw,110px) clamp(20px,5vw,72px) clamp(48px,6vw,80px)",
       }}
     >
-      <SectionWave color="#FAF7F2" position="top" />
-      <SectionWave color="#FAF7F2" position="bottom" />
-      <div
+      {/* Faint background wordmark */}
+      <span
+        aria-hidden
+        className="st-watermark"
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          minHeight: "auto",
+          position: "absolute",
+          top: "clamp(10px,3vw,40px)",
+          left: "clamp(20px,5vw,72px)",
+          right: 0,
+          fontFamily: SERIF,
+          fontWeight: 800,
+          fontSize: "clamp(90px,16vw,260px)",
+          lineHeight: 0.8,
+          letterSpacing: "0.02em",
+          color: INK,
+          opacity: 0.05,
+          textTransform: "uppercase",
+          pointerEvents: "none",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
         }}
-        className="abt-grid"
       >
-        {/* ── LEFT: Text panel ── */}
-        <div
-          style={{
-            padding: "clamp(40px, 5vw, 72px) clamp(24px, 4vw, 56px)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-          }}
-        >
-          {/* Eyebrow */}
+        Tradition
+      </span>
+
+      <div
+        className="st-grid"
+        style={{
+          position: "relative",
+          maxWidth: 1280,
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "1.05fr 0.95fr",
+          gap: "clamp(32px,5vw,72px)",
+          alignItems: "center",
+        }}
+      >
+        {/* ── LEFT: story text ── */}
+        <div>
           <p
-            className="abt-eyebrow"
             style={{
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 11,
+              fontFamily: SANS,
+              fontSize: 12,
               fontWeight: 700,
-              letterSpacing: "4px",
+              letterSpacing: "3.5px",
               textTransform: "uppercase",
-              color: "#C9A24A",
-              marginBottom: 18,
+              color: TERRA,
+              margin: "0 0 clamp(16px,2vw,26px)",
             }}
           >
-            Our Story
+            Our Story Section
           </p>
 
-          {/* Headline */}
-          <h2
-            className="abt-headline"
-            style={{
-              fontFamily: "var(--font-playfair), serif",
-              fontWeight: 700,
-              fontSize: "clamp(28px, 3.4vw, 44px)",
-              lineHeight: 1.05,
-              color: "#214D34",
-              letterSpacing: "-1px",
-              margin: 0,
-              marginBottom: 22,
-            }}
-          >
-            Brewed with
-            <br />
-            <em style={{ color: "#7AA33C", fontStyle: "italic" }}>three</em>
-            <br />
-            generations
-            <br />
-            of love.
+          {/* Heading */}
+          <h2 style={{ margin: "0 0 clamp(26px,3vw,38px)", lineHeight: 1 }}>
+            <span
+              style={{
+                display: "block",
+                fontFamily: SERIF,
+                fontWeight: 700,
+                fontSize: "clamp(34px,4.6vw,60px)",
+                color: INK,
+                letterSpacing: "-0.5px",
+              }}
+            >
+              The Story of
+            </span>
+            <span style={{ position: "relative", display: "inline-block", marginTop: 4 }}>
+              <span
+                style={{
+                  fontFamily: HAND,
+                  fontWeight: 700,
+                  fontSize: "clamp(64px,9vw,128px)",
+                  color: GREEN,
+                  lineHeight: 0.9,
+                  display: "inline-block",
+                }}
+              >
+                Kanaa
+              </span>
+              {/* leaf accent */}
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                style={{ position: "absolute", top: "-6%", right: "-10%", width: "clamp(22px,3vw,40px)", height: "auto" }}
+              >
+                <path d="M21 3c-7 0-13 4-13 11 0 3 2 6 5 7 0-6 3-11 8-13-4 4-6 8-6 13 6-1 10-7 10-13 0-3-2-5-4-5z" fill={GREEN} opacity="0.9" />
+              </svg>
+              {/* underline swoosh */}
+              <svg
+                aria-hidden
+                viewBox="0 0 300 18"
+                preserveAspectRatio="none"
+                style={{ position: "absolute", left: 0, right: 0, bottom: "2%", width: "100%", height: "clamp(10px,1.4vw,18px)" }}
+              >
+                <path d="M3 12 C 70 2, 150 16, 230 6 C 260 2, 285 8, 297 5" fill="none" stroke={GREEN} strokeWidth="3" strokeLinecap="round" />
+              </svg>
+            </span>
           </h2>
 
           {/* Body */}
-          <div className="abt-body" style={{ marginBottom: 28 }}>
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: "clamp(13px, 0.95vw, 14.5px)",
-                lineHeight: 1.65,
-                color: "#4A3728",
-                opacity: 0.85,
-                marginBottom: 12,
-                maxWidth: 420,
-              }}
-            >
-              Kanaa was born in a small kitchen in Tamil Nadu, where our
-              grandmother would spend every summer sun-drying mangoes, grinding
-              fresh spices, and slowly folding them into cold-pressed gingelly
-              oil — a ritual passed down through three generations.
-            </p>
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: "clamp(13px, 0.95vw, 14.5px)",
-                lineHeight: 1.65,
-                color: "#4A3728",
-                opacity: 0.85,
-                maxWidth: 420,
-              }}
-            >
-              Today, every jar of Kanaa is made the same way — small batches,
-              single-origin ingredients, never a drop of artificial anything.
-              Nature is the recipe. We&apos;re just the hands.
-            </p>
-          </div>
-
-          {/* Stats row */}
-          <div
-            className="abt-stats"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: 0,
-              borderTop: "1px solid rgba(33,77,52,0.12)",
-              paddingTop: 18,
-              marginBottom: 24,
-            }}
-          >
-            {stats.map((s, i) => (
-              <div
-                key={s.value}
-                className="abt-stat"
-                style={{
-                  paddingRight: 16,
-                  borderRight:
-                    i < stats.length - 1
-                      ? "1px solid rgba(33,77,52,0.12)"
-                      : "none",
-                  paddingLeft: i > 0 ? 16 : 0,
-                }}
-              >
-                <p
-                  style={{
-                    fontFamily: "var(--font-playfair), serif",
-                    fontSize: "clamp(20px, 1.9vw, 26px)",
-                    fontWeight: 800,
-                    color: "#214D34",
-                    lineHeight: 1,
-                    marginBottom: 4,
-                  }}
-                >
-                  {s.value}
-                </p>
-                <p
-                  style={{
-                    fontFamily: "var(--font-dm-sans), sans-serif",
-                    fontSize: 10,
-                    fontWeight: 600,
-                    letterSpacing: "1.5px",
-                    textTransform: "uppercase",
-                    color: "#7A5C40",
-                    opacity: 0.8,
-                  }}
-                >
-                  {s.label}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Signature */}
-          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-            <div
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: "50%",
-                background: "#214D34",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <span
-                style={{
-                  color: "#FAF7F2",
-                  fontFamily: "var(--font-playfair)",
-                  fontSize: 16,
-                  fontStyle: "italic",
-                }}
-              >
-                K
-              </span>
-            </div>
-            <div>
-              <p
-                style={{
-                  fontFamily: "var(--font-playfair), serif",
-                  fontWeight: 600,
-                  fontSize: 13,
-                  color: "#214D34",
-                  marginBottom: 2,
-                }}
-              >
-                The Kanaa Family
-              </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-dm-sans), sans-serif",
-                  fontSize: 11,
-                  color: "#7A3E1D",
-                  opacity: 0.65,
-                  letterSpacing: "0.5px",
-                }}
-              >
-                Tamil Nadu, India
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ── RIGHT: Image panel ── */}
-        <div
-          className="abt-img-panel"
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            background: "#214D34",
-          }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1596797038530-2c107229654b?w=1200&q=85&auto=format&fit=crop"
-            alt="Kanaa pickles — handcrafted in Tamil Nadu"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: "center",
-              display: "block",
-            }}
-          />
-
-          {/* Vertical label */}
-          <p
-            className="abt-vert-text"
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: 28,
-              transform: "translateY(-50%) rotate(-90deg)",
-              transformOrigin: "center center",
-              fontFamily: "var(--font-dm-sans), sans-serif",
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: "4px",
-              textTransform: "uppercase",
-              color: "rgba(255,244,216,0.65)",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Kanaa · Est. in Tradition
+          <p style={bodyStyle}>
+            In every South Indian home, food has always been more than just a
+            meal. It is comfort after a long day, care shared through recipes,
+            and traditions passed from one generation to another.
           </p>
 
-          {/* Bottom caption card */}
-          <div
+          <p
             style={{
-              position: "absolute",
-              bottom: 22,
-              right: 22,
-              background: "rgba(33,77,52,0.82)",
-              backdropFilter: "blur(12px)",
-              borderRadius: 12,
-              padding: "14px 18px",
-              maxWidth: 190,
-              border: "1px solid rgba(255,244,216,0.15)",
+              fontFamily: SERIF,
+              fontWeight: 700,
+              fontSize: "clamp(17px,1.5vw,22px)",
+              color: HIGHLIGHT,
+              margin: "clamp(18px,2vw,26px) 0",
+              display: "inline-block",
+              borderBottom: `2px solid ${HIGHLIGHT}55`,
+              paddingBottom: 4,
             }}
           >
-            <p
-              style={{
-                fontFamily: "var(--font-playfair), serif",
-                fontSize: 15,
-                fontWeight: 700,
-                color: "#FFF4D8",
-                lineHeight: 1.25,
-                marginBottom: 6,
-              }}
-            >
-              Made in small batches.
-            </p>
-            <p
-              style={{
-                fontFamily: "var(--font-dm-sans), sans-serif",
-                fontSize: 11,
-                color: "rgba(255,244,216,0.72)",
-                lineHeight: 1.55,
-              }}
-            >
-              Every jar leaves our kitchen within 48 hours of preparation.
-            </p>
-          </div>
+            Kanaa was born from this belief.
+          </p>
 
-          {/* Decorative corner circle */}
-          <div
-            style={{
-              position: "absolute",
-              top: 22,
-              right: 22,
-              width: 48,
-              height: 48,
-              borderRadius: "50%",
-              border: "1.5px solid rgba(201,162,74,0.5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path
-                d="M12 2 C8 2 4 6 4 11 C4 17 8 20 12 22 C16 20 20 17 20 11 C20 6 16 2 12 2Z"
-                stroke="rgba(201,162,74,0.7)"
-                strokeWidth="1.2"
-                fill="none"
-              />
-              <line
-                x1="12"
-                y1="2"
-                x2="12"
-                y2="22"
-                stroke="rgba(201,162,74,0.5)"
-                strokeWidth="0.8"
-              />
-              <line
-                x1="4"
-                y1="11"
-                x2="20"
-                y2="11"
-                stroke="rgba(201,162,74,0.5)"
-                strokeWidth="0.8"
-              />
-            </svg>
+          <p style={bodyStyle}>
+            We wanted to bring back the warmth of homemade food in a way that
+            fits modern lifestyles — where people are busy, time is limited, but
+            the desire for healthy and authentic food still remains.
+          </p>
+          <p style={{ ...bodyStyle, marginBottom: 0 }}>
+            Inspired by traditional recipes and everyday kitchen wisdom, Kanaa
+            creates products that are simple to prepare, nourishing to eat, and
+            comforting to experience. Every thokku, soup mix, kulambu blend, and
+            snack is thoughtfully crafted using wholesome ingredients and
+            familiar flavours that remind you of home.
+          </p>
+        </div>
+
+        {/* ── RIGHT: layered story image ── */}
+        <div className="st-art">
+          <div className="st-art-box">
+            {/* story2 sits behind (static) */}
+            <div className="st-layer st-layer-back" style={{ backgroundImage: "url(/story/story2.png)" }} aria-hidden />
+            {/* story1 in front, rotating slowly clockwise */}
+            <div className="st-layer st-layer-spin" style={{ backgroundImage: "url(/story/story1.png)" }} aria-hidden />
           </div>
         </div>
       </div>
 
+      {/* ── TIMELINE STRIP ── */}
+      <div
+        className="st-timeline"
+        style={{
+          position: "relative",
+          maxWidth: 1280,
+          margin: "clamp(40px,5vw,64px) auto 0",
+          paddingTop: "clamp(28px,3vw,40px)",
+          borderTop: `1px solid ${INK}22`,
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "clamp(16px,2.5vw,36px)",
+        }}
+      >
+        {timeline.map((t, i) => (
+          <div
+            key={t.title}
+            style={{
+              display: "flex",
+              gap: 12,
+              alignItems: "flex-start",
+              paddingLeft: i > 0 ? "clamp(12px,2vw,28px)" : 0,
+              borderLeft: i > 0 ? `1px solid ${INK}1A` : "none",
+            }}
+          >
+            <svg width="26" height="26" viewBox="0 0 24 24" style={{ flexShrink: 0, marginTop: 2 }}>
+              {t.icon}
+            </svg>
+            <div>
+              <p
+                style={{
+                  fontFamily: SANS,
+                  fontSize: t.lead ? 12.5 : 11.5,
+                  fontWeight: 800,
+                  letterSpacing: "1.2px",
+                  textTransform: "uppercase",
+                  color: INK,
+                  margin: "0 0 5px",
+                  lineHeight: 1.2,
+                }}
+              >
+                {t.title}
+              </p>
+              <p
+                style={{
+                  fontFamily: SANS,
+                  fontSize: 12.5,
+                  lineHeight: 1.5,
+                  color: BODY,
+                  opacity: 0.8,
+                  margin: 0,
+                }}
+              >
+                {t.body}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <style>{`
-        @media (max-width: 768px) {
-          .abt-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .abt-img-panel {
-            min-height: 60vw !important;
-            aspect-ratio: 4/3;
-          }
-          .abt-stats {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 16px !important;
-          }
-          .abt-stat {
-            border-right: none !important;
-            padding-left: 0 !important;
-            padding-right: 0 !important;
-          }
+        .st-art-box {
+          position: relative;
+          width: 100%;
+          aspect-ratio: 1 / 1;
+        }
+        .st-layer {
+          position: absolute;
+          inset: 0;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+        }
+        .st-layer-back {
+          z-index: 1;
+          transform: scale(1.6);    /* spread the doodles out around story1 */
+          transform-origin: 50% 50%;
+        }
+        .st-layer-spin {
+          z-index: 2;
+          transform-origin: 50% 50%;
+          animation: stSpin 48s linear infinite;
+        }
+        /* scale baked into the keyframes so the bowl stays enlarged while spinning */
+        @keyframes stSpin {
+          from { transform: rotate(0deg) scale(0.92); }
+          to   { transform: rotate(360deg) scale(0.92); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .st-layer-spin { animation: none; }
+        }
+
+        @media (max-width: 900px) {
+          .st-grid { grid-template-columns: 1fr !important; }
+          .st-art { order: -1; }
+          .st-art-box { max-width: 520px; margin: 0 auto; }
+          .st-timeline { grid-template-columns: 1fr 1fr !important; gap: 24px !important; }
+          .st-timeline > div { border-left: none !important; padding-left: 0 !important; }
+        }
+        @media (max-width: 480px) {
+          .st-timeline { grid-template-columns: 1fr !important; }
         }
       `}</style>
     </section>
   );
 }
+
+const bodyStyle: React.CSSProperties = {
+  fontFamily: SANS,
+  fontSize: "clamp(14px,1.05vw,16px)",
+  lineHeight: 1.75,
+  color: BODY,
+  margin: "0 0 clamp(14px,1.6vw,20px)",
+  maxWidth: 520,
+};

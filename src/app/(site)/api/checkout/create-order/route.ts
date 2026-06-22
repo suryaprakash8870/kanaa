@@ -1,8 +1,82 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { getPayload } from "payload";
+import { sql } from "drizzle-orm";
 import config from "@/payload/payload.config";
+import { sendEmail, orderConfirmationEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
+
+type PayloadInstance = Awaited<ReturnType<typeof getPayload>>;
+type DrizzleDb = {
+  execute: (q: unknown) => Promise<{ rowCount?: number | null; rows?: unknown[] }>;
+};
+
+function drizzleOf(payload: PayloadInstance): DrizzleDb | null {
+  const db = (payload.db as unknown as { drizzle?: DrizzleDb }).drizzle;
+  return db && typeof db.execute === "function" ? db : null;
+}
+
+/**
+ * Atomically reserve `wantQty` units of a variant: an all-or-nothing conditional
+ * decrement so two concurrent checkouts can never oversell the same unit.
+ * Returns the qty reserved (wantQty on success, 0 if not enough stock).
+ * Falls back to a non-atomic read-modify-write only if the raw query path is
+ * unavailable, so checkout never hard-breaks.
+ */
+async function reserveStock(
+  payload: PayloadInstance,
+  id: string | number,
+  wantQty: number,
+): Promise<number> {
+  const db = drizzleOf(payload);
+  if (db) {
+    try {
+      const res = await db.execute(
+        sql`UPDATE "variants" SET "stock" = "stock" - ${wantQty} WHERE "id" = ${id} AND "stock" >= ${wantQty} RETURNING "id"`,
+      );
+      const n = res.rowCount ?? (Array.isArray(res.rows) ? res.rows.length : 0);
+      return n > 0 ? wantQty : 0;
+    } catch (e) {
+      console.error(`[checkout] atomic reserve failed for variant ${id}; falling back:`, e);
+    }
+  }
+  try {
+    const v = await payload.findByID({ collection: "variants", id });
+    const stock = (v?.stock as number) ?? 0;
+    const grant = Math.min(stock, wantQty);
+    if (grant <= 0) return 0;
+    await payload.update({ collection: "variants", id, data: { stock: stock - grant } });
+    return grant;
+  } catch (e) {
+    console.error(`[checkout] fallback reserve failed for variant ${id}:`, e);
+    return 0;
+  }
+}
+
+/** Give reserved stock back (used when an order fails to persist after reserving). */
+async function releaseStock(
+  payload: PayloadInstance,
+  id: string | number,
+  qty: number,
+): Promise<void> {
+  const db = drizzleOf(payload);
+  if (db) {
+    try {
+      await db.execute(sql`UPDATE "variants" SET "stock" = "stock" + ${qty} WHERE "id" = ${id}`);
+      return;
+    } catch (e) {
+      console.error(`[checkout] atomic release failed for variant ${id}; falling back:`, e);
+    }
+  }
+  try {
+    const v = await payload.findByID({ collection: "variants", id });
+    const stock = (v?.stock as number) ?? 0;
+    await payload.update({ collection: "variants", id, data: { stock: stock + qty } });
+  } catch (e) {
+    console.error(`[checkout] fallback release failed for variant ${id}:`, e);
+  }
+}
 
 /**
  * UPI-QR checkout.
@@ -61,7 +135,19 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config });
 
-    // Price cart server-side (never trust the client).
+    // Aggregate the requested qty per variant (dedupe repeated cart rows) with a
+    // sanitized positive-integer qty — a missing/NaN/negative qty must never
+    // poison pricing.
+    const requested = new Map<string, number>();
+    for (const row of body.items) {
+      const q = Math.floor(Number(row.qty));
+      if (!Number.isFinite(q) || q < 1) continue;
+      const key = String(row.variantId);
+      requested.set(key, (requested.get(key) ?? 0) + q);
+    }
+
+    // Price the cart server-side (never trust the client) AND atomically reserve
+    // stock per variant, so two concurrent checkouts can never oversell.
     const items: {
       variant: string | number;
       productName: string;
@@ -70,18 +156,17 @@ export async function POST(req: NextRequest) {
       unitPrice: number;
       lineTotal: number;
     }[] = [];
+    const reserved: { id: string | number; qty: number }[] = [];
     let subtotal = 0;
 
-    for (const row of body.items) {
-      const v = await payload.findByID({
-        collection: "variants",
-        id: row.variantId,
-        depth: 1,
-      });
+    for (const [variantId, wantQty] of requested) {
+      const v = await payload.findByID({ collection: "variants", id: variantId, depth: 1 });
       if (!v || !v.active) continue;
-      const qty = Math.max(1, Math.min(row.qty, (v.stock as number) || 99));
+      const granted = await reserveStock(payload, v.id, wantQty);
+      if (granted <= 0) continue; // out of stock — skip this line
+      reserved.push({ id: v.id, qty: granted });
       const unitPrice = v.price as number;
-      const lineTotal = unitPrice * qty;
+      const lineTotal = unitPrice * granted;
       const product = v.product as { name?: string } | string;
       const productName =
         typeof product === "object" && product?.name ? product.name : "Item";
@@ -92,7 +177,7 @@ export async function POST(req: NextRequest) {
         variant: v.id,
         productName,
         variantLabel: `${v.weightGrams}g`,
-        qty,
+        qty: granted,
         unitPrice,
         lineTotal,
       });
@@ -101,65 +186,98 @@ export async function POST(req: NextRequest) {
 
     if (!items.length)
       return NextResponse.json(
-        { error: "No purchasable items in cart" },
-        { status: 400 },
+        { error: "Sorry — those items are out of stock." },
+        { status: 409 },
       );
 
     const shipping = subtotal >= 499 ? 0 : 60;
     const total = subtotal + shipping;
-    const orderNumber = `KNA-${Date.now().toString(36).toUpperCase()}`;
+    // Timestamp keeps it sortable; random suffix makes order numbers
+    // unguessable (so they can't be enumerated on the public track page).
+    const rand = randomBytes(4).toString("hex").toUpperCase();
+    const orderNumber = `KNA-${Date.now().toString(36).toUpperCase()}-${rand}`;
 
-    // 1. Upload the screenshot via Payload local API (bypasses access control).
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const media = await payload.create({
-      collection: "media",
-      data: {
-        alt: `Payment proof for ${orderNumber} by ${body.customer.name}`,
-      },
-      file: {
-        data: buffer,
-        mimetype: file.type,
-        name: `${orderNumber}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`,
-        size: file.size,
-      },
-    });
+    let created: { id: string | number } | undefined;
+    try {
+      // 1. Upload the screenshot via Payload local API (bypasses access control).
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const media = await payload.create({
+        collection: "media",
+        data: {
+          alt: `Payment proof for ${orderNumber} by ${body.customer.name}`,
+        },
+        file: {
+          data: buffer,
+          mimetype: file.type,
+          name: `${orderNumber}-${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`,
+          size: file.size,
+        },
+      });
 
-    // 2. Create the Order, linked to the media doc.
-    const created = await payload.create({
-      collection: "orders",
-      data: {
+      // 2. Create the Order, linked to the media doc.
+      created = await payload.create({
+        collection: "orders",
+        data: {
+          orderNumber,
+          status: "awaiting_verification",
+          paymentMethod: "upi_qr",
+          paymentProof: media.id,
+          upiTransactionRef: body.upiRef?.trim() || undefined,
+          customer: body.customer,
+          shippingAddress: { country: "India", ...body.shippingAddress },
+          items,
+          subtotal,
+          shipping,
+          discount: 0,
+          total,
+          currency: "INR",
+        },
+      });
+    } catch (e) {
+      // The order didn't persist — release the stock we already reserved so it
+      // isn't silently lost from inventory.
+      await Promise.all(reserved.map((r) => releaseStock(payload, r.id, r.qty).catch(() => {})));
+      throw e;
+    }
+
+    // 4. Send the order-confirmation email (best-effort — never block the order).
+    try {
+      const { subject, html } = orderConfirmationEmail({
         orderNumber,
-        status: "awaiting_verification",
-        paymentMethod: "upi_qr",
-        paymentProof: media.id,
-        upiTransactionRef: body.upiRef?.trim() || undefined,
-        customer: body.customer,
-        shippingAddress: { country: "India", ...body.shippingAddress },
+        customerName: body.customer.name,
+        customerEmail: body.customer.email,
         items,
         subtotal,
         shipping,
-        discount: 0,
         total,
         currency: "INR",
-      },
-    });
+        shippingAddress: { country: "India", ...body.shippingAddress },
+      });
+      await sendEmail({
+        to: body.customer.email,
+        toName: body.customer.name,
+        subject,
+        html,
+      });
+    } catch (e) {
+      console.error("[checkout] confirmation email failed:", e);
+    }
 
     return NextResponse.json({
       ok: true,
-      order: { id: created.id, orderNumber, total, currency: "INR" },
+      order: { id: created!.id, orderNumber, total, currency: "INR" },
     });
   } catch (err) {
     console.error("[checkout/create-order]", err);
-    const message =
-      err instanceof Error ? err.message : "Checkout failed. Please try again.";
+    const isDev = process.env.NODE_ENV !== "production";
+    // In production return a fixed generic message — never echo raw DB/Payload
+    // error text (table/column/constraint names) to an unauthenticated caller.
     return NextResponse.json(
       {
-        error: message,
-        // Helpful in dev; harmless to leak for this store.
-        detail:
-          err instanceof Error && process.env.NODE_ENV !== "production"
-            ? err.stack
-            : undefined,
+        error: isDev && err instanceof Error
+          ? err.message
+          : "Checkout failed. Please try again.",
+        detail: isDev && err instanceof Error ? err.stack : undefined,
       },
       { status: 500 },
     );

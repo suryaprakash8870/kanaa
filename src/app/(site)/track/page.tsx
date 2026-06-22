@@ -83,10 +83,11 @@ async function lookup(
       depth: 0,
     });
     const o = docs[0];
-    if (!o) return { error: "We couldn't find that order number." };
-    const customerEmail = (o.customer as { email?: string })?.email ?? "";
-    if (customerEmail.trim().toLowerCase() !== email.trim().toLowerCase()) {
-      return { error: "Order number and email don't match." };
+    const customerEmail = (o?.customer as { email?: string })?.email ?? "";
+    // Same message whether the order doesn't exist OR the email doesn't match,
+    // so the page can't be used to probe which order numbers are real.
+    if (!o || customerEmail.trim().toLowerCase() !== email.trim().toLowerCase()) {
+      return { error: "We couldn't find an order matching that number and email." };
     }
     return {
       id: String(o.id),
@@ -129,7 +130,7 @@ export default async function TrackPage({
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(56px + clamp(40px, 6vw, 80px))",
+          paddingTop: "calc(96px + clamp(40px, 6vw, 80px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",

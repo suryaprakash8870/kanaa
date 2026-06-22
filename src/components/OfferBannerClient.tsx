@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useHideOnScroll } from "@/hooks/useHideOnScroll";
 
 export type Offer = {
   icon: string;
@@ -17,7 +16,6 @@ const GOLD = "#E5B43A";
 export default function OfferBannerClient({ offers }: { offers: Offer[] }) {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
-  const hidden = useHideOnScroll(80);
   const total = offers.length;
   if (total === 0) return null;
   const trackRef = useRef<HTMLDivElement>(null);
@@ -42,8 +40,6 @@ export default function OfferBannerClient({ offers }: { offers: Offer[] }) {
         left: 0,
         right: 0,
         zIndex: 60,
-        transform: hidden ? "translateY(-100%)" : "translateY(0)",
-        transition: "transform 0.35s cubic-bezier(0.16,1,0.3,1)",
         background: GREEN,
         color: CREAM,
         height: 40,

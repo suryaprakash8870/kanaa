@@ -307,7 +307,7 @@ export default function AtOurTable() {
             }}
           >
             <a
-              href="#about"
+              href="/about"
               className="aot-body aot-cta"
               style={{
                 display: "inline-flex",
@@ -513,8 +513,8 @@ export default function AtOurTable() {
             }}
           >
             {[
-              { n: "14+", l: "pickle varieties" },
-              { n: "30d", l: "terracotta aged" },
+              { n: "25+", l: "homemade products" },
+              { n: "5 min", l: "quick soups" },
               { n: "5000", l: "happy kitchens" },
             ].map((s) => (
               <div key={s.l} className="aot-stat" style={{ textAlign: "center" }}>

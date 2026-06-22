@@ -9,6 +9,7 @@ import sharp from "sharp";
 import { Users } from "./collections/Users";
 import { Media } from "./collections/Media";
 import { Offers } from "./collections/Offers";
+import { Posts } from "./collections/Posts";
 import { Products } from "./collections/Products";
 import { Variants } from "./collections/Variants";
 import { Testimonials } from "./collections/Testimonials";
@@ -32,14 +33,17 @@ export default buildConfig({
       baseDir: path.resolve(dirname, ".."),
     },
   },
-  collections: [Users, Media, Offers, Products, Variants, Testimonials, Orders],
+  collections: [Users, Media, Offers, Posts, Products, Variants, Testimonials, Orders],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET ?? "",
   typescript: {
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   db: postgresAdapter({
-    pool: { connectionString: process.env.DATABASE_URL },
+    pool: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    },
   }),
   sharp,
   upload: {

@@ -22,7 +22,7 @@ export default function CheckoutPage() {
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(56px + clamp(32px, 4vw, 60px))",
+          paddingTop: "calc(96px + clamp(32px, 4vw, 60px))",
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",

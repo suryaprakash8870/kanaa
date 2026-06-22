@@ -4,6 +4,7 @@ import "./globals.css";
 import ViewCanvas from "@/components/ViewCanvas";
 import LenisProvider from "@/components/LenisProvider";
 import CartDrawer from "@/components/CartDrawer";
+import OfferBanner from "@/components/OfferBanner";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -65,12 +66,12 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Kanaa — Rooted From The Nature",
+  title: "Kanaa — Homemade Goodness for Everyday Healthy Living",
   description:
-    "Handcrafted Indian pickles brewed with cold-pressed oil, no preservatives, and generations of grandma's recipes. Order Kanaa Organic Pickles today.",
+    "Homemade healthy South Indian food — thokkus, kulambu mixes, 5-minute soups, powders, and snacks made with wholesome ingredients. Authentic taste, modern convenience.",
   openGraph: {
-    title: "Kanaa — Rooted From The Nature",
-    description: "Artisanal Indian pickles, the old way.",
+    title: "Kanaa — Homemade Goodness for Everyday Healthy Living",
+    description: "Homemade healthy South Indian food, made simple for modern lifestyles.",
     siteName: "Kanaa",
   },
 };
@@ -82,6 +83,7 @@ export default function RootLayout({
     <html lang="en" className={`${playfair.variable} ${dmSans.variable} ${fraunces.variable} ${bricolage.variable} ${dmSerifDisplay.variable} ${caveat.variable} ${cormorant.variable}`}>
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <LenisProvider />
+        <OfferBanner />
         {children}
         <CartDrawer />
         <ViewCanvas />

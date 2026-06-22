@@ -1,30 +1,18 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ProductsBrowser, { type ProductCard } from "@/components/ProductsBrowser";
 import { getPayload } from "payload";
 import config from "@/payload/payload.config";
 
 export const revalidate = 300;
 export const metadata = { title: "Kanaa — All Products" };
 
-const BG = "#DFF0D8";
+const BG = "#DFF0D8"; // soft mint
 const INK = "#1F4A33";
 const ACCENT = "#4FB83A";
-const CREAM = "#FFF4D8";
 
-type Card = {
-  id: string;
-  name: string;
-  tamil?: string;
-  slug: string;
-  tagline?: string;
-  color: string;
-  price?: number;
-  mrp?: number;
-  heroImageUrl?: string;
-};
-
-async function loadProducts(): Promise<Card[]> {
+async function loadProducts(): Promise<ProductCard[]> {
   try {
     const payload = await getPayload({ config });
     const { docs } = await payload.find({
@@ -35,8 +23,8 @@ async function loadProducts(): Promise<Card[]> {
     });
     if (docs.length === 0) return [];
 
-    // Batch: one query for all variants across all products, then pick the
-    // cheapest active variant per product in-memory. Turns N+1 into 1+1.
+    // Batch: one query for all variants, then pick the cheapest active variant
+    // per product in-memory. Turns N+1 into 1+1.
     const productIds = docs.map((p) => p.id);
     const { docs: allVariants } = await payload.find({
       collection: "variants",
@@ -93,12 +81,28 @@ export default async function ProductsPage() {
         style={{
           background: BG,
           minHeight: "100vh",
-          paddingTop: "calc(56px + clamp(40px, 6vw, 90px))",
+          paddingTop: 0,
           paddingBottom: "clamp(60px, 8vw, 110px)",
           position: "relative",
           overflow: "hidden",
         }}
       >
+        {/* Full-width cover image with a curved mint edge flowing into the page */}
+        <div className="pr-cover">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/hero-bg.jpg" alt="A spread of Kanaa homemade products" />
+          <svg
+            className="pr-cover-curve"
+            viewBox="0 0 1440 120"
+            preserveAspectRatio="none"
+            aria-hidden
+          >
+            <path
+              d="M0,54 C 360,118 720,2 1080,40 C 1260,58 1360,72 1440,58 L1440,120 L0,120 Z"
+              fill={BG}
+            />
+          </svg>
+        </div>
         {/* Doodle background — big ribbon line only */}
         <svg
           aria-hidden
@@ -128,7 +132,7 @@ export default async function ProductsPage() {
           style={{
             maxWidth: 1200,
             margin: "0 auto",
-            padding: "0 clamp(20px, 5vw, 60px)",
+            padding: "clamp(20px, 4vw, 56px) clamp(20px, 5vw, 60px) 0",
             position: "relative",
             zIndex: 1,
           }}
@@ -146,7 +150,7 @@ export default async function ProductsPage() {
                 marginBottom: 18,
               }}
             >
-              Shop the Collection
+              Our Products
             </p>
             <h1
               style={{
@@ -161,7 +165,7 @@ export default async function ProductsPage() {
                 marginBottom: 18,
               }}
             >
-              the whole shelf.
+              crafted with care.
             </h1>
             <p
               style={{
@@ -174,39 +178,11 @@ export default async function ProductsPage() {
                 margin: "0 auto",
               }}
             >
-              Small-batch, cold-pressed, hand-ground. Every jar tells a different story — pick the
-              one that sounds like yours.
+              Explore our range of healthy homemade products inspired by traditional
+              South Indian flavours. Thoughtfully prepared using wholesome ingredients,
+              every product brings nourishment, convenience, and authentic taste to your
+              everyday meals.
             </p>
-          </div>
-
-          {/* Filter pills (static for now) */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: 10,
-              flexWrap: "wrap",
-              marginBottom: "clamp(28px, 4vw, 48px)",
-            }}
-          >
-            {["All jars", "Sun-cured", "Cold-pressed", "Aged in clay"].map((t, i) => (
-              <span
-                key={t}
-                style={{
-                  padding: "8px 16px",
-                  borderRadius: 999,
-                  border: `1px solid ${INK}${i === 0 ? "" : "33"}`,
-                  background: i === 0 ? INK : "transparent",
-                  color: i === 0 ? CREAM : INK,
-                  fontFamily: "var(--font-dm-sans), sans-serif",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.3px",
-                }}
-              >
-                {t}
-              </span>
-            ))}
           </div>
 
           {products.length === 0 ? (
@@ -231,222 +207,7 @@ export default async function ProductsPage() {
               </p>
             </div>
           ) : (
-            <div
-              className="pr-grid"
-              style={{
-                marginTop: 12,
-                display: "grid",
-                gridTemplateColumns: "repeat(5, 1fr)",
-                gap: "clamp(14px, 1.8vw, 22px)",
-              }}
-            >
-              {products.map((p, i) => (
-                <Link
-                  key={p.id}
-                  href={`/products/${p.slug}`}
-                  className="pr-card"
-                  style={{
-                    position: "relative",
-                    display: "block",
-                    background: "#fff",
-                    borderRadius: 14,
-                    overflow: "hidden",
-                    textDecoration: "none",
-                    color: "inherit",
-                    border: `1px solid ${INK}14`,
-                    boxShadow: "0 2px 8px rgba(31,74,51,0.05)",
-                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                  }}
-                >
-                  {/* Ribbon */}
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: 8,
-                      left: 8,
-                      zIndex: 2,
-                      background: CREAM,
-                      color: INK,
-                      fontFamily: "var(--font-dm-sans)",
-                      fontSize: 8,
-                      fontWeight: 700,
-                      letterSpacing: "1.2px",
-                      textTransform: "uppercase",
-                      padding: "3px 7px",
-                      borderRadius: 999,
-                      border: `1px solid ${INK}22`,
-                    }}
-                  >
-                    0{(i % 9) + 1}
-                  </span>
-
-                  {/* Image */}
-                  <div
-                    style={{
-                      aspectRatio: "1/1",
-                      background: `linear-gradient(135deg, ${p.color}22 0%, ${p.color}11 100%)`,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      overflow: "hidden",
-                      position: "relative",
-                    }}
-                  >
-                    <div
-                      aria-hidden
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        width: "78%",
-                        height: "78%",
-                        borderRadius: "50%",
-                        border: `1px dashed ${p.color}55`,
-                      }}
-                    />
-                    {p.heroImageUrl ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
-                        src={p.heroImageUrl}
-                        alt={p.name}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          position: "relative",
-                          zIndex: 1,
-                        }}
-                      />
-                    ) : (
-                      <span
-                        style={{
-                          fontFamily: "var(--font-cormorant), serif",
-                          fontStyle: "italic",
-                          fontSize: 54,
-                          fontWeight: 600,
-                          color: p.color,
-                          opacity: 0.6,
-                          position: "relative",
-                          zIndex: 1,
-                        }}
-                      >
-                        {p.name.slice(0, 1)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Info — compact */}
-                  <div style={{ padding: "12px 12px 14px" }}>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-cormorant), serif",
-                        fontStyle: "italic",
-                        fontWeight: 600,
-                        fontSize: 17,
-                        color: INK,
-                        margin: 0,
-                        letterSpacing: "-0.3px",
-                        lineHeight: 1.15,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {p.name}
-                    </h3>
-                    {p.tamil && (
-                      <p
-                        style={{
-                          fontFamily: "var(--font-dm-sans), sans-serif",
-                          color: p.color,
-                          fontSize: 9,
-                          fontWeight: 600,
-                          letterSpacing: "0.8px",
-                          textTransform: "uppercase",
-                          margin: "2px 0 0",
-                        }}
-                      >
-                        {p.tamil}
-                      </p>
-                    )}
-                    <div
-                      style={{
-                        marginTop: 10,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        gap: 6,
-                      }}
-                    >
-                      {p.price ? (
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
-                          <span
-                            style={{
-                              fontFamily: "var(--font-dm-serif), serif",
-                              fontSize: 17,
-                              color: INK,
-                            }}
-                          >
-                            ₹{p.price}
-                          </span>
-                          {p.mrp && p.mrp > p.price && (
-                            <span
-                              style={{
-                                fontFamily: "var(--font-dm-sans), sans-serif",
-                                fontSize: 11,
-                                color: INK,
-                                opacity: 0.45,
-                                textDecoration: "line-through",
-                              }}
-                            >
-                              ₹{p.mrp}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span
-                          style={{
-                            fontFamily: "var(--font-dm-sans), sans-serif",
-                            color: INK,
-                            opacity: 0.55,
-                            fontSize: 11,
-                          }}
-                        >
-                          Soon
-                        </span>
-                      )}
-                      <span
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          width: 26,
-                          height: 26,
-                          borderRadius: 999,
-                          background: INK,
-                          color: CREAM,
-                          flexShrink: 0,
-                        }}
-                      >
-                        <svg
-                          width="11"
-                          height="11"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.6"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M5 12h14M13 6l6 6-6 6" />
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
+            <ProductsBrowser products={products} />
           )}
 
           {/* Trust row */}
@@ -462,10 +223,10 @@ export default async function ProductsPage() {
             }}
           >
             {[
-              { k: "Sun-cured", v: "Never sun-shortcut" },
-              { k: "Cold-pressed", v: "Never refined" },
-              { k: "Hand-ground", v: "Never factory" },
-              { k: "Clay-aged", v: "Never rushed" },
+              { k: "Homemade taste", v: "Traditional recipes" },
+              { k: "Healthy ingredients", v: "Wholesome & natural" },
+              { k: "Quick & easy", v: "Made for busy days" },
+              { k: "Comforting", v: "In every meal" },
             ].map((item) => (
               <div key={item.k}>
                 <p
@@ -499,18 +260,28 @@ export default async function ProductsPage() {
         </div>
 
         <style>{`
-          .pr-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(31,74,51,0.14);
+          .pr-cover {
+            position: relative;
+            margin-top: 96px;
+            width: 100%;
+            height: clamp(280px, 40vh, 500px);
+            overflow: hidden;
           }
-          @media (max-width: 1100px) {
-            .pr-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          .pr-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 38%;
+            display: block;
           }
-          @media (max-width: 860px) {
-            .pr-grid { grid-template-columns: repeat(3, 1fr) !important; }
-          }
-          @media (max-width: 560px) {
-            .pr-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .pr-cover-curve {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            width: 100%;
+            height: clamp(52px, 7vw, 104px);
+            display: block;
           }
         `}</style>
       </main>

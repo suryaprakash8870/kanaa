@@ -130,7 +130,7 @@ export default function CTABanner() {
               textTransform: "uppercase",
             }}
           >
-            Small-batch · Dropping weekly
+            Homemade · Healthy · Comforting
           </span>
         </div>
 
@@ -145,7 +145,7 @@ export default function CTABanner() {
             margin: "0 0 22px",
           }}
         >
-          Taste the difference{" "}
+          Taste homemade{" "}
           <span
             style={{
               fontStyle: "italic",
@@ -153,7 +153,7 @@ export default function CTABanner() {
               fontVariationSettings: "'opsz' 144, 'SOFT' 100, 'WONK' 1",
             }}
           >
-            nature makes.
+            health.
           </span>
         </h2>
 
@@ -168,8 +168,9 @@ export default function CTABanner() {
             margin: "0 auto 40px",
           }}
         >
-          We hand-pack a fresh batch every week. When the jars are gone, they&apos;re
-          gone — no warehouses, no preservatives, no waiting.
+          Nourishing homemade food that brings together authentic taste, natural
+          ingredients, and everyday convenience — made to comfort, nourish, and
+          simplify your meals.
         </p>
 
         <div
@@ -212,14 +213,14 @@ export default function CTABanner() {
               e.currentTarget.style.boxShadow = "0 14px 32px rgba(31,74,51,0.28)";
             }}
           >
-            Order your jar
+            Explore products
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M13 6l6 6-6 6" />
             </svg>
           </a>
 
           <a
-            href="/#process"
+            href="/about"
             style={{
               color: INK,
               fontFamily: "var(--font-dm-sans), sans-serif",
@@ -235,7 +236,7 @@ export default function CTABanner() {
               gap: 6,
             }}
           >
-            How it&apos;s made
+            Our story
           </a>
         </div>
 
@@ -254,8 +255,8 @@ export default function CTABanner() {
         >
           {[
             { k: "Free shipping", v: "above ₹499" },
-            { k: "Fresh pack", v: "within 48 hrs" },
-            { k: "Flavor promise", v: "30-day guarantee" },
+            { k: "Made fresh", v: "in small batches" },
+            { k: "Healthy & natural", v: "always" },
           ].map((item, i) => (
             <div
               key={item.k}

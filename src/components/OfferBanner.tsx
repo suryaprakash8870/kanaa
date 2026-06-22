@@ -6,9 +6,9 @@ export const revalidate = 60;
 
 const FALLBACK: Offer[] = [
   { icon: "🚚", text: "Free shipping across India on orders above ₹499", cta: "Shop now" },
-  { icon: "🎁", text: "Buy 2 jars, get 1 free — limited time on Wild Mango", cta: "Grab the deal" },
   { icon: "✨", text: "First order? Use code KANAA10 for 10% off", cta: "Apply code" },
-  { icon: "🌿", text: "New: Lime & Ginger, aged 30 days in terracotta", cta: "Try it" },
+  { icon: "🍲", text: "New: healthy 5-minute soup mixes", cta: "Try them" },
+  { icon: "🥄", text: "Homemade thokkus & kulambu mixes — made fresh", cta: "Explore" },
   { icon: "📦", text: "Subscribe & save 15% on every monthly delivery", cta: "Subscribe" },
 ];
 

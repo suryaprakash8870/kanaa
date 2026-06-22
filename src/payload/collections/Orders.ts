@@ -1,12 +1,16 @@
 import type { CollectionConfig } from "payload";
+import { sendEmail, orderStatusEmail, type OrderEmailData } from "@/lib/email";
 
 export const Orders: CollectionConfig = {
   slug: "orders",
   admin: { useAsTitle: "orderNumber", defaultColumns: ["orderNumber", "status", "total", "createdAt"] },
   access: {
-    // Admins can see everything. Storefront writes via server actions / Razorpay webhook.
+    // Admins only via the public REST/GraphQL API. The storefront checkout
+    // creates orders through the Local API (overrideAccess), so it is unaffected
+    // by this — but the public POST /api/orders endpoint can no longer be used
+    // to forge arbitrary orders (e.g. status=paid, total=0).
     read: ({ req }) => Boolean(req.user),
-    create: () => true,
+    create: ({ req }) => Boolean(req.user),
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
   },
@@ -108,6 +112,40 @@ export const Orders: CollectionConfig = {
           data.verifiedAt = new Date().toISOString();
         }
         return data;
+      },
+    ],
+    afterChange: [
+      async ({ doc, previousDoc, operation }) => {
+        // Email the customer when an admin moves the order to a status we
+        // notify about. Best-effort: never throw out of the hook.
+        try {
+          if (operation !== "update") return;
+          if (!previousDoc || doc.status === previousDoc.status) return;
+          const customer = doc.customer as { name?: string; email?: string } | undefined;
+          if (!customer?.email) return;
+
+          const data: OrderEmailData = {
+            orderNumber: doc.orderNumber as string,
+            status: doc.status as string,
+            customerName: customer.name || "there",
+            customerEmail: customer.email,
+            items: [],
+            subtotal: (doc.subtotal as number) ?? 0,
+            shipping: (doc.shipping as number) ?? 0,
+            total: (doc.total as number) ?? 0,
+            currency: (doc.currency as string) ?? "INR",
+          };
+          const mail = orderStatusEmail(data);
+          if (!mail) return; // status not one we email about
+          await sendEmail({
+            to: customer.email,
+            toName: customer.name,
+            subject: mail.subject,
+            html: mail.html,
+          });
+        } catch (e) {
+          console.error("[orders] status email failed:", e);
+        }
       },
     ],
   },
