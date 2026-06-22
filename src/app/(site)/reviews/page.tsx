@@ -117,9 +117,9 @@ export default async function ReviewsPage() {
           style={{
             position: "relative",
             overflow: "hidden",
-            minHeight: "clamp(660px, 88vh, 880px)",
-            paddingTop: "calc(var(--hdr) + clamp(20px, 4vw, 50px))",
-            paddingBottom: "clamp(40px, 6vw, 80px)",
+            minHeight: "clamp(780px, 96vh, 1000px)",
+            paddingTop: "calc(var(--hdr) + clamp(150px, 19vw, 240px))",
+            paddingBottom: "clamp(150px, 19vw, 240px)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -127,7 +127,7 @@ export default async function ReviewsPage() {
         >
           <Doodles />
           {/* Eyebrow pinned near the top */}
-          <p style={{ position: "absolute", top: "calc(var(--hdr) + clamp(24px, 5vw, 56px))", left: 0, right: 0, zIndex: 2, textAlign: "center", fontFamily: SANS, fontSize: 12, letterSpacing: "2.5px", textTransform: "uppercase", color: "#5a7a4f", margin: 0 }}>
+          <p style={{ position: "absolute", top: "calc(var(--hdr) + clamp(8px, 2vw, 24px))", left: 0, right: 0, zIndex: 3, textAlign: "center", fontFamily: SANS, fontSize: 12, letterSpacing: "2.5px", textTransform: "uppercase", color: "#5a7a4f", margin: 0 }}>
             Loved by home kitchens
           </p>
 
@@ -139,13 +139,12 @@ export default async function ReviewsPage() {
               position: "absolute",
               left: 0,
               right: 0,
-              bottom: "50%",
-              marginBottom: "clamp(60px, 9vw, 150px)",
+              top: "calc(var(--hdr) + clamp(6px, 1.5vw, 22px))",
               textAlign: "center",
               pointerEvents: "none",
               fontFamily: "var(--font-bricolage), system-ui, sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(96px, 22vw, 300px)",
+              fontSize: "clamp(74px, 16vw, 220px)",
               lineHeight: 0.82,
               letterSpacing: "-0.045em",
               color: "transparent",
@@ -163,13 +162,12 @@ export default async function ReviewsPage() {
               position: "absolute",
               left: 0,
               right: 0,
-              top: "50%",
-              marginTop: "clamp(60px, 9vw, 150px)",
+              bottom: "clamp(16px, 3vw, 56px)",
               textAlign: "center",
               pointerEvents: "none",
               fontFamily: "var(--font-bricolage), system-ui, sans-serif",
               fontWeight: 800,
-              fontSize: "clamp(96px, 22vw, 300px)",
+              fontSize: "clamp(74px, 16vw, 220px)",
               lineHeight: 0.82,
               letterSpacing: "-0.045em",
               color: "transparent",
